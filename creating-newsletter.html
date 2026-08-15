@@ -128,8 +128,6 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-
 .fold summary::-webkit-details-marker{display:none}
 .fold summary::before{content:'＋ ';color:var(--accent)}
 .fold[open] summary::before{content:'− ';color:var(--accent)}
-code.sql{display:block;white-space:pre;overflow:auto;background:#1a1a1a;color:#eae7e3;font-family:var(--mono);
-  font-size:11px;line-height:1.55;padding:12px;border-radius:6px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:88px;background:var(--ink);color:#fff;
   padding:9px 16px;border-radius:99px;font-size:12.5px;z-index:80;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
@@ -173,8 +171,8 @@ code.sql{display:block;white-space:pre;overflow:auto;background:#1a1a1a;color:#e
    GitHub Pages に置くときは下2行を埋める。
    空のままだとブラウザ内保存の「お試しモード」で動きます。
    ============================================================ */
-const SUPABASE_URL = 'https://kzzdsibwjvocbihfqtlv.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_n2qWIOJzVfrzjYANDe4UzA_O4dLVmZ1';
+const SUPABASE_URL = '';
+const SUPABASE_ANON_KEY = '';
 
 const LIVE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 const LKEY = 'nsq:v2';
@@ -367,64 +365,12 @@ function vStock(){
 }
 
 function vSettings(){
-  const sql=`create table ns_slots (
-  key text primary key,
-  label text not null,
-  sort_order int default 0
-);
-
-create table ns_issues (
-  id uuid primary key default gen_random_uuid(),
-  issue_month text not null unique,   -- 'YYYY-MM'
-  send_date date,                     -- 発行日（○月○日号）
-  headline text,                      -- 黒帯のヘッドライン
-  lead_text text,                     -- リード文
-  status text default 'planning',     -- planning / making / sent
-  created_at timestamptz default now()
-);
-
-create table ns_items (
-  id uuid primary key default gen_random_uuid(),
-  issue_id uuid references ns_issues(id) on delete set null,
-  slot text references ns_slots(key) on delete set null,
-  title text not null,                -- 見出し
-  body text,                          -- 本文
-  image_status text default 'none',   -- none / todo / asked / ready
-  image_note text,                    -- バナーの指示・素材メモ
-  cta_label text,                     -- ボタンの文言
-  link_url text,                      -- ボタンのリンク先
-  event_date date,
-  event_time text,
-  event_place text,
-  event_fee text,
-  event_host text,
-  event_extra text,                   -- 参考書籍など
-  owner text,
-  status text default 'idea',         -- idea / writing / done
-  sort_order int default 0,
-  created_at timestamptz default now()
-);
-
-insert into ns_slots (key,label,sort_order) values
-${DEFAULT_SLOTS.map(s=>`  ('${s.key}','${s.label}',${s.sort_order})`).join(',\n')};
-
-alter table ns_slots  enable row level security;
-alter table ns_issues enable row level security;
-alter table ns_items  enable row level security;
-create policy "anon all" on ns_slots  for all using (true) with check (true);
-create policy "anon all" on ns_issues for all using (true) with check (true);
-create policy "anon all" on ns_items  for all using (true) with check (true);`;
   return `<p class="hint">いまのモード：<strong>${LIVE?'Supabase 接続':'お試し（ブラウザ内保存）'}</strong></p>
   <div class="issue"><div class="issue-body">
     <div class="slot-label"><span>枠</span><span class="rule"></span><button class="add" data-newslot="1">＋</button></div>
     ${S.slots.map(s=>`<div class="item" data-editslot="${s.key}"><span class="bar"></span>
       <span class="item-main"><span class="item-title">${esc(s.label)}</span>
       <span class="item-meta"><span>${esc(s.key)}</span></span></span></div>`).join('')}
-  </div></div>
-  <div class="issue"><div class="issue-body">
-    <div class="slot-label"><span>Supabase の準備</span><span class="rule"></span></div>
-    <p class="hint">SQL Editor に貼って実行し、ファイル冒頭の URL とキーを埋めてください。</p>
-    <code class="sql">${esc(sql)}</code>
   </div></div>`;
 }
 function emptyState(){
