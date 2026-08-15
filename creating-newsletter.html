@@ -167,6 +167,7 @@ code.sql{display:block;white-space:pre;overflow:auto;background:#1a1a1a;color:#e
 <button class="fab" id="fab">＋ ネタ</button>
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ============================================================
    GitHub Pages に置くときは下2行を埋める。
@@ -177,6 +178,8 @@ const SUPABASE_ANON_KEY = 'sb_publishable_n2qWIOJzVfrzjYANDe4UzA_O4dLVmZ1';
 
 const LIVE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 const LKEY = 'nsq:v2';
+let sb = null, session = null;
+if(LIVE) sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const DEFAULT_SLOTS = [
   {key:'lead',    label:'リード文',       sort_order:1},
@@ -196,7 +199,7 @@ const uid = () => 'x'+Math.random().toString(36).slice(2,10)+Date.now().toString
 
 async function api(path, opts={}){
   const r = await fetch(SUPABASE_URL+'/rest/v1/'+path, {...opts, headers:{
-    apikey:SUPABASE_ANON_KEY, Authorization:'Bearer '+SUPABASE_ANON_KEY,
+    apikey:SUPABASE_ANON_KEY, Authorization:'Bearer '+(session?session.access_token:SUPABASE_ANON_KEY),
     'Content-Type':'application/json', Prefer:'return=representation', ...(opts.headers||{})}});
   if(!r.ok) throw new Error(await r.text());
   return r.status===204 ? null : r.json();
@@ -658,9 +661,33 @@ document.querySelector('nav').addEventListener('click',e=>{
   const b=e.target.closest('button[data-view]'); if(!b) return; view=b.dataset.view; render();});
 document.getElementById('fab').onclick=()=>itemSheet(null,{});
 
+function loginGate(){
+  document.querySelector('nav').style.display='none';
+  document.getElementById('fab').style.display='none';
+  document.getElementById('main').innerHTML=`
+    <div class="issue" style="margin-top:40px"><div class="issue-body" style="text-align:center;padding:34px 18px">
+      <p class="hint" style="margin-bottom:18px">編集台帳を開くにはログインしてください。</p>
+      <button class="btn primary" id="signin">Googleでログイン</button>
+    </div></div>`;
+  document.getElementById('signin').onclick=()=>sb.auth.signInWithOAuth({
+    provider:'google', options:{redirectTo:location.href.split('#')[0]}});
+}
+
 (async function init(){
   const badge=document.getElementById('modeBadge');
-  try{ await loadAll(); badge.textContent=LIVE?'SUPABASE':'お試し保存'; badge.classList.toggle('live',LIVE); }
+  if(LIVE){
+    const {data}=await sb.auth.getSession();
+    session=data.session;
+    sb.auth.onAuthStateChange((_e,s)=>{ if(!!s!==!!session) location.reload(); });
+    if(!session){ badge.textContent='未ログイン'; loginGate(); return; }
+    badge.textContent=(session.user.email||'').split('@')[0];
+    badge.classList.add('live');
+    badge.style.cursor='pointer'; badge.title='ログアウト';
+    badge.onclick=async()=>{ if(confirm('ログアウトしますか？')){ await sb.auth.signOut(); location.reload(); } };
+  }else{
+    badge.textContent='お試し保存';
+  }
+  try{ await loadAll(); }
   catch(err){ badge.textContent='接続エラー'; console.error(err); }
   render();
 })();
