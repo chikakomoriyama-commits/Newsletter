@@ -9,6 +9,7 @@
 :root{
   --ground:#fffdf9; --paper:#f8f5ee; --ink:#1c1a17; --muted:#7d766a;
   --hair:#e4dfd2; --accent:#8a7550; --accent-soft:#efe9db; --amber:#a8762a;
+  --good:#5c7a5c; --good-soft:#e9efe6; --bad:#a0522d; --bad-soft:#f6e7df;
   --bar:#3b3833;
   --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
   --serif:Georgia,"Times New Roman","Hiragino Mincho ProN",serif;
@@ -20,105 +21,116 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-size:
   padding-bottom:env(safe-area-inset-bottom)}
 button,input,select,textarea{font:inherit;color:inherit}
 .topbar{background:var(--bar);height:6px}
-header{background:var(--paper);border-bottom:1px solid var(--hair);padding:16px 16px 0;position:sticky;top:0;z-index:40}
+header{background:var(--paper);border-bottom:1px solid var(--hair);padding:14px 16px 0;position:sticky;top:0;z-index:40}
 .brand{display:flex;align-items:flex-start;gap:12px}
 .lockup{font-family:var(--serif);line-height:1.02;margin:0}
-.lockup .l1{display:block;font-size:23px;font-weight:700;letter-spacing:-.01em}
-.lockup .l2{display:block;font-size:23px;font-weight:400;padding-left:.72em}
-.modebadge{margin-left:auto;margin-top:6px;font-size:10px;font-family:var(--mono);border:1px solid var(--hair);
-  border-radius:99px;padding:2px 8px;color:var(--muted)}
+.lockup .l1{display:block;font-size:22px;font-weight:700;letter-spacing:-.01em}
+.lockup .l2{display:block;font-size:22px;font-weight:400;padding-left:.72em}
+.hdr-right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-top:4px}
+.modebadge{font-size:10px;font-family:var(--mono);border:1px solid var(--hair);border-radius:99px;padding:2px 8px;color:var(--muted);background:none;cursor:pointer}
 .modebadge.live{border-color:var(--accent);color:var(--accent)}
-nav{display:flex;gap:2px;margin-top:14px}
-nav button{background:none;border:0;padding:9px 13px;font-size:13px;font-weight:600;color:var(--muted);
-  border-bottom:2px solid transparent;cursor:pointer}
+.savestat{font-size:10px;font-family:var(--mono);color:var(--muted);white-space:nowrap}
+.savestat.ok{color:var(--good)}
+.savestat.busy{color:var(--amber)}
+.savestat.err{color:var(--bad);font-weight:700}
+nav{display:flex;gap:2px;margin-top:12px}
+nav button{background:none;border:0;padding:9px 14px;font-size:13.5px;font-weight:600;color:var(--muted);
+  border-bottom:2px solid transparent;cursor:pointer;position:relative}
 nav button.on{color:var(--ink);border-bottom-color:var(--accent)}
-main{padding:16px 16px 100px;max-width:900px;margin:0 auto}
-.hint{font-size:12px;color:var(--muted);margin:0 0 14px}
+nav button .n{font-family:var(--mono);font-size:10px;font-weight:400;margin-left:4px;color:var(--muted)}
+main{padding:16px 16px 110px;max-width:760px;margin:0 auto}
+.hint{font-size:12px;color:var(--muted);margin:0 0 12px}
+.banner{background:var(--bad-soft);border:1px solid var(--bad);color:var(--bad);border-radius:6px;padding:10px 12px;font-size:13px;
+  margin:0 0 14px;display:flex;gap:10px;align-items:center}
+.banner .sp{flex:1}
+.banner button{border:1px solid var(--bad);background:var(--ground);color:var(--bad);border-radius:4px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer}
 
-/* matrix */
-.matrixwrap{background:var(--ground);border:1px solid var(--hair);border-radius:6px;overflow:auto;-webkit-overflow-scrolling:touch}
-table.matrix{border-collapse:separate;border-spacing:0;width:100%;min-width:560px}
-table.matrix th,table.matrix td{border-bottom:1px solid var(--hair);padding:0}
-table.matrix thead th{position:sticky;top:0;background:var(--ground);z-index:2;font-size:10px;font-weight:600;
-  color:var(--muted);letter-spacing:.03em;padding:9px 4px;text-align:center;line-height:1.25;
-  vertical-align:bottom;border-bottom:1px solid var(--ink)}
-table.matrix th.mcol{position:sticky;left:0;background:var(--ground);z-index:3;text-align:left;
-  padding:10px 12px;min-width:120px;border-right:1px solid var(--hair)}
-table.matrix tbody th.mcol{z-index:1;font-weight:600}
-.mlabel{font-family:var(--mono);font-size:13px;display:block}
-.mtheme{font-size:11px;color:var(--muted);font-weight:400;display:block;margin-top:1px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
-td.cell{text-align:center;cursor:pointer;height:44px}
-td.cell:hover{background:var(--paper)}
-.dot{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid var(--hair);background:transparent}
-.dot.filled{background:var(--accent);border-color:var(--accent)}
-.dot.draft{background:var(--amber);border-color:var(--amber)}
-.cnt{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:3px;vertical-align:1px}
-tr.sent{background:#fbfbfa}
-tr.sent th.mcol .mlabel{color:var(--muted)}
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:10px 2px 0}
-.legend span{display:flex;align-items:center;gap:5px}
+/* inbox */
+.capture{display:flex;gap:8px;margin-bottom:14px}
+.capture input{flex:1;padding:11px 12px;border:1px solid var(--accent);border-radius:6px;background:var(--ground);font-size:15px}
+.capture button{border:0;background:var(--accent);color:#fff;border-radius:6px;padding:0 16px;font-weight:700;cursor:pointer}
+.capture button:disabled{opacity:.4}
 
-/* issue */
-.issue{background:var(--ground);border:1px solid var(--hair);border-radius:6px;margin-bottom:10px;overflow:hidden}
-.issue-head{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer}
-.issue-month{font-family:var(--mono);font-size:14px;font-weight:600;white-space:nowrap}
-.issue-theme{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.issue-theme.set{color:var(--ink);font-weight:600}
-.pill{font-size:10px;padding:2px 7px;border-radius:99px;border:1px solid var(--hair);color:var(--muted);white-space:nowrap}
-.pill.making{border-color:var(--amber);color:var(--amber)}
-.pill.sent{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
-.chev{color:var(--muted);font-size:11px}
-.issue-body{border-top:1px solid var(--hair);padding:12px 14px 14px;background:#fcfcfb}
-.slot{margin-bottom:14px}
-.slot-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;
-  color:var(--muted);margin-bottom:6px}
-.slot-label .rule{flex:1;height:1px;background:var(--hair)}
-.slot-label .add{border:0;background:none;color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;padding:2px 4px}
-.item{display:flex;gap:9px;align-items:flex-start;padding:9px 10px;background:var(--ground);
-  border:1px solid var(--hair);border-radius:5px;margin-bottom:5px;cursor:pointer}
+/* item rows */
+.item{display:flex;gap:9px;align-items:flex-start;padding:10px 11px;background:var(--ground);
+  border:1px solid var(--hair);border-radius:5px;margin-bottom:6px;cursor:pointer}
 .item .bar{width:3px;align-self:stretch;border-radius:2px;background:var(--hair);flex:none}
 .item.writing .bar{background:var(--amber)}
 .item.done .bar{background:var(--accent)}
 .item-main{flex:1;min-width:0}
-.item-title{font-size:13.5px;font-weight:600;line-height:1.45}
+.item-title{font-size:14px;font-weight:600;line-height:1.45;word-break:break-word}
 .item-meta{font-size:11px;color:var(--muted);margin-top:3px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.tag{border:1px solid var(--hair);border-radius:3px;padding:0 5px;line-height:17px}
-.tag.warn{border-color:var(--accent);color:var(--accent)}
-.tag.ok{border-color:#cfd8cf;color:#5c7a5c}
-.empty-slot{font-size:12px;color:#a9a4a0;padding:8px 10px;border:1px dashed var(--hair);border-radius:5px;cursor:pointer}
-.issue-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.item-snippet{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{border:1px solid var(--hair);border-radius:3px;padding:0 5px;line-height:17px;white-space:nowrap}
+.tag.warn{border-color:var(--amber);color:var(--amber)}
+.tag.ok{border-color:#cfd8cf;color:var(--good)}
+.tag.tpl{border-style:dashed}
+.empty{font-size:12.5px;color:#a9a4a0;padding:10px 12px;border:1px dashed var(--hair);border-radius:5px;cursor:pointer;
+  display:flex;gap:14px;align-items:center;margin-bottom:6px}
+.empty span{color:var(--accent);font-weight:700}
+.nothing{text-align:center;color:#a9a4a0;font-size:13px;padding:36px 12px}
 
-.filterbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px}
-.filterbar button{white-space:nowrap;font-size:12px;padding:5px 11px;border-radius:99px;border:1px solid var(--hair);
-  background:var(--ground);color:var(--muted);cursor:pointer}
-.filterbar button.on{border-color:var(--ink);color:var(--ink);font-weight:600}
+/* issue */
+.issuebar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.issuepick{position:relative}
+.issuepick select{appearance:none;-webkit-appearance:none;border:1px solid var(--hair);border-radius:6px;background:var(--ground);
+  padding:7px 30px 7px 12px;font-family:var(--mono);font-size:15px;font-weight:600;cursor:pointer}
+.issuepick::after{content:'▾';position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:12px}
+.pill{font-size:10px;padding:2px 8px;border-radius:99px;border:1px solid var(--hair);color:var(--muted);white-space:nowrap}
+.pill.making{border-color:var(--amber);color:var(--amber)}
+.pill.sent{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.issuebar .sp{flex:1}
+.headline{font-size:13px;color:var(--muted);margin:-6px 0 14px;padding:0 2px}
+.headline.set{color:var(--ink);font-weight:600}
+.slot{margin-bottom:16px}
+.slot-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;
+  color:var(--muted);margin-bottom:6px}
+.slot-label .rule{flex:1;height:1px;background:var(--hair)}
+.slot-label .add{border:0;background:none;color:var(--accent);font-size:13px;font-weight:700;cursor:pointer;padding:2px 4px}
 
-.btn{border:1px solid var(--hair);background:var(--ground);color:var(--ink);padding:8px 14px;border-radius:5px;
-  font-size:13px;font-weight:600;cursor:pointer}
+/* check */
+.checklist{background:var(--ground);border:1px solid var(--hair);border-radius:6px;padding:6px 0;margin-bottom:18px}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:8px 14px;font-size:13.5px;cursor:default}
+.chk i{width:15px;height:15px;border:1.5px solid var(--hair);border-radius:3px;flex:none;margin-top:4px;position:relative}
+.chk i.ok{background:var(--good);border-color:var(--good)}
+.chk i.ok::after{content:'';position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.chk i.ng{border-color:var(--bad);background:var(--bad-soft)}
+.chk i.info{border-color:var(--amber);background:#fbf3e4}
+.chk.ng{color:var(--ink)}
+.chk.ok{color:var(--muted)}
+.chk.link{cursor:pointer}
+.chk .sub{font-size:11.5px;color:var(--muted);display:block}
+.allgood{padding:12px 14px;font-size:13.5px;color:var(--good);font-weight:600}
+.copyrow{display:flex;gap:9px;align-items:center;padding:10px 12px;background:var(--ground);border:1px solid var(--hair);border-radius:5px;margin-bottom:6px}
+.copyrow .t{flex:1;min-width:0;font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copyrow .s{font-size:11px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
+.copyrow button{border:1px solid var(--hair);background:var(--ground);border-radius:4px;padding:5px 11px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.copyrow button.did{border-color:var(--good);color:var(--good)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+
+.btn{border:1px solid var(--hair);background:var(--ground);color:var(--ink);padding:9px 14px;border-radius:5px;
+  font-size:13.5px;font-weight:600;cursor:pointer}
 .btn:active{transform:translateY(1px)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn.ghost{border:0;color:var(--muted);padding:8px 6px}
-.btn.danger{color:var(--accent);border-color:var(--accent-soft)}
+.btn.ghost{border:0;color:var(--muted);padding:9px 6px}
+.btn.danger{color:var(--bad);border-color:var(--bad-soft)}
 .btn.block{width:100%}
-.fab{position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));background:var(--accent);color:#fff;
-  border:0;border-radius:99px;padding:14px 20px;font-size:14px;font-weight:700;
-  box-shadow:0 6px 18px rgba(60,48,30,.28);cursor:pointer;z-index:30}
+.btn:disabled{opacity:.45;cursor:default}
 
 .scrim{position:fixed;inset:0;background:rgba(20,18,17,.42);z-index:50;display:flex;align-items:flex-end;justify-content:center}
-.sheet{background:var(--ground);width:100%;max-width:660px;max-height:92vh;overflow:auto;border-radius:12px 12px 0 0;
+.sheet{background:var(--ground);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:12px 12px 0 0;
   padding:18px 18px calc(24px + env(safe-area-inset-bottom))}
 @media(min-width:700px){.scrim{align-items:center}.sheet{border-radius:10px;max-height:86vh}}
 .sheet h2{font-size:15px;margin:0 0 4px}
 .sheet .sh-sub{font-size:12px;color:var(--muted);margin:0 0 14px}
 label.f{display:block;margin-bottom:12px}
 label.f span{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
-input[type=text],input[type=date],select,textarea{width:100%;padding:9px 10px;border:1px solid var(--hair);
+input[type=text],input[type=date],input[type=url],select,textarea{width:100%;padding:9px 10px;border:1px solid var(--hair);
   border-radius:5px;background:var(--ground)}
-textarea{min-height:84px;resize:vertical;line-height:1.65}
+textarea{min-height:110px;resize:vertical;line-height:1.7}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
 .row{display:flex;gap:10px}.row>*{flex:1}
-.sheet-actions{display:flex;gap:8px;align-items:center;margin-top:6px}
+.sheet-actions{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
 .sheet-actions .sp{flex:1}
 .seg{display:flex;border:1px solid var(--hair);border-radius:5px;overflow:hidden}
 .seg button{flex:1;border:0;background:var(--ground);padding:9px 4px;font-size:12.5px;color:var(--muted);cursor:pointer}
@@ -128,8 +140,14 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-
 .fold summary::-webkit-details-marker{display:none}
 .fold summary::before{content:'＋ ';color:var(--accent)}
 .fold[open] summary::before{content:'− ';color:var(--accent)}
+.chk-tpl{display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:14px;cursor:pointer}
+.chk-tpl input{width:16px;height:16px}
+.menu{display:flex;flex-direction:column;gap:6px;margin:8px 0 14px}
+.menu button{text-align:left;border:1px solid var(--hair);background:var(--ground);border-radius:6px;padding:11px 14px;font-size:14px;cursor:pointer;display:flex;gap:10px;align-items:center}
+.menu button b{color:var(--accent);font-family:var(--mono);font-size:12px;min-width:56px}
+.menu button:active{background:var(--paper)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:88px;background:var(--ink);color:#fff;
-  padding:9px 16px;border-radius:99px;font-size:12.5px;z-index:80;opacity:0;transition:opacity .2s;pointer-events:none}
+  padding:9px 16px;border-radius:99px;font-size:12.5px;z-index:80;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
 .toast.on{opacity:1}
 /* preview */
 .pv{background:var(--ground);border:1px solid var(--hair);border-radius:6px;padding:0 0 16px;overflow:hidden}
@@ -143,6 +161,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-
 .pv-cta{border:1px solid var(--ink);text-align:center;padding:11px 8px;font-size:13.5px;margin-bottom:12px}
 .pv-facts{font-size:13px;color:#3a3a3a}
 .pv-facts div{margin-bottom:2px}
+.gate{background:var(--ground);border:1px solid var(--hair);border-radius:6px;text-align:center;padding:36px 18px;margin-top:40px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -152,265 +171,300 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-
 <header>
   <div class="brand">
     <h1 class="lockup"><span class="l1">Creating</span><span class="l2">Newsletter</span></h1>
-    <span class="modebadge" id="modeBadge">…</span>
+    <div class="hdr-right">
+      <button class="modebadge" id="modeBadge">…</button>
+      <span class="savestat" id="saveStat"></span>
+    </div>
   </div>
   <nav>
-    <button data-view="matrix" class="on">俯瞰</button>
-    <button data-view="issues">号</button>
-    <button data-view="stock">ネタ帳</button>
-    <button data-view="settings">設定</button>
+    <button data-view="inbox">ネタ<span class="n" id="nInbox"></span></button>
+    <button data-view="issue" class="on">今号</button>
+    <button data-view="check">確認<span class="n" id="nCheck"></span></button>
   </nav>
 </header>
 <main id="main"></main>
-<button class="fab" id="fab">＋ ネタ</button>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ============================================================
-   GitHub Pages に置くときは下2行を埋める。
-   空のままだとブラウザ内保存の「お試しモード」で動きます。
+   Supabase の接続先（公開してよい値。守るのは RLS の役目）
    ============================================================ */
-const SUPABASE_URL = '';
-const SUPABASE_ANON_KEY = '';
+const SUPABASE_URL = 'https://kzzdsibwjvocbihfqtlv.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_n2qWIOJzVfrzjYANDe4UzA_O4dLVmZ1';
 
-const LIVE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
-const LKEY = 'nsq:v2';
-let sb = null, session = null;
+/* ?demo=1 を付けると Supabase を使わず localStorage だけで動く（動作確認用） */
+const DEMO = new URLSearchParams(location.search).get('demo')==='1';
+const LIVE = !DEMO && !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+const K_CACHE='nsq3:cache', K_PENDING='nsq3:pending', K_VIEW='nsq3:view', K_ISSUE='nsq3:issue';
+
+let sb=null, session=null;
 if(LIVE) sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const DEFAULT_SLOTS = [
-  {key:'lead',    label:'リード文',       sort_order:1},
-  {key:'main',    label:'今号の主役',     sort_order:2},
-  {key:'notice',  label:'案内ブロック',   sort_order:3},
-  {key:'oneonone',label:'1on1のお誘い',   sort_order:4},
-  {key:'podcast', label:'Podcast',        sort_order:5}
+/* ---------- 固定の枠 ---------- */
+const SLOTS = [
+  {key:'lead',    label:'リード文',     single:true,  plain:true},
+  {key:'main',    label:'今号の主役'},
+  {key:'notice',  label:'案内ブロック', multi:true},
+  {key:'oneonone',label:'1on1のお誘い', template:true},
+  {key:'podcast', label:'Podcast',      template:true}
 ];
-
-const ITEM_STATUS = {idea:'ネタ', writing:'原稿中', done:'確定'};
-const IMG_STATUS  = {none:'画像なし', todo:'画像未', asked:'依頼中', ready:'画像済'};
+const slotOf = k => SLOTS.find(s=>s.key===k);
+const ITEM_STATUS  = {idea:'ネタ', writing:'原稿中', done:'確定'};
+const IMG_STATUS   = {none:'画像なし', todo:'画像未', asked:'依頼中', ready:'画像済'};
 const ISSUE_STATUS = {planning:'計画中', making:'制作中', sent:'配信済'};
 
-const S = {slots:[], issues:[], items:[]};
-let view='matrix', openIssue=null, stockFilter='all';
-const uid = () => 'x'+Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
+const S = {issues:[], items:[]};
+let view = 'issue', curIssue = null, pending = [];
+try{ view = localStorage.getItem(K_VIEW) || 'issue'; }catch(e){}
 
-async function api(path, opts={}){
-  const r = await fetch(SUPABASE_URL+'/rest/v1/'+path, {...opts, headers:{
+/* ---------- utils ---------- */
+const uuid = () => (crypto.randomUUID ? crypto.randomUUID() :
+  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&3|8)).toString(16);}));
+const ym = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+const monthLabel = m => m ? m.replace('-','.') : '';
+const thisMonth = () => ym(new Date());
+const nextMonthOf = m => { const [y,mm]=m.split('-').map(Number); return ym(new Date(y,mm,1)); };
+const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nowHM = () => { const d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); };
+const jdate = s => s ? s.replace(/^(\d+)-(\d+)-(\d+)$/,'$1/$2/$3') : '';
+const md = s => s ? s.slice(5).replace('-','/') : '';
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('on');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('on'),2000); }
+function lsGet(k){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+
+/* ---------- 保存状態の表示 ---------- */
+function setStat(kind,text){ const el=document.getElementById('saveStat'); el.className='savestat '+kind; el.textContent=text; }
+
+/* ---------- データ層：楽観更新 → Supabase → 失敗は退避 ---------- */
+async function rest(path,opts={}){
+  const r = await fetch(SUPABASE_URL+'/rest/v1/'+path,{...opts,headers:{
     apikey:SUPABASE_ANON_KEY, Authorization:'Bearer '+(session?session.access_token:SUPABASE_ANON_KEY),
     'Content-Type':'application/json', Prefer:'return=representation', ...(opts.headers||{})}});
-  if(!r.ok) throw new Error(await r.text());
+  if(!r.ok) throw new Error(r.status+' '+await r.text());
   return r.status===204 ? null : r.json();
 }
-async function localRead(){ try{ const r=await window.storage.get(LKEY); return r?JSON.parse(r.value):null; }catch(e){ return null; } }
-async function localWrite(){ try{ await window.storage.set(LKEY, JSON.stringify(S)); }catch(e){ console.warn(e); } }
+async function runOp(op){
+  if(op.kind==='insert') await rest(op.table,{method:'POST',body:JSON.stringify(op.row)});
+  else if(op.kind==='update') await rest(`${op.table}?id=eq.${op.id}`,{method:'PATCH',body:JSON.stringify(op.patch)});
+  else if(op.kind==='delete') await rest(`${op.table}?id=eq.${op.id}`,{method:'DELETE'});
+}
+let flushing=false;
+async function flush(){
+  if(!LIVE || flushing || !pending.length) return;
+  flushing=true; setStat('busy','保存中…');
+  while(pending.length){
+    const op=pending[0];
+    try{ await runOp(op); pending.shift(); lsSet(K_PENDING,pending); }
+    catch(err){ console.error(err); flushing=false; setStat('err','保存できていません'); renderBanner(); return; }
+  }
+  flushing=false; setStat('ok','保存済み '+nowHM()); renderBanner();
+}
+async function commit(op){
+  lsSet(K_CACHE,S);
+  if(!LIVE){ setStat('ok','この端末に保存 '+nowHM()); return; }
+  pending.push(op); lsSet(K_PENDING,pending);
+  await flush();
+}
+const cleanItem = i => { const {_local,...r}=i; return r; };
+async function insertItem(row){ const rec={id:uuid(),captured_at:new Date().toISOString(),...row}; S.items.push(rec); await commit({kind:'insert',table:'ns_items',row:cleanItem(rec)}); return rec; }
+async function updateItem(id,patch){ const i=S.items.find(x=>x.id===id); Object.assign(i,patch); await commit({kind:'update',table:'ns_items',id,patch}); return i; }
+async function deleteItem(id){ S.items=S.items.filter(x=>x.id!==id); await commit({kind:'delete',table:'ns_items',id}); }
+async function insertIssue(row){ const rec={id:uuid(),headline:'',send_date:null,lead_text:'',status:'planning',...row}; S.issues.push(rec); sortIssues(); await commit({kind:'insert',table:'ns_issues',row:rec}); return rec; }
+async function updateIssue(id,patch){ const i=S.issues.find(x=>x.id===id); Object.assign(i,patch); await commit({kind:'update',table:'ns_issues',id,patch}); return i; }
+const sortIssues = () => S.issues.sort((a,b)=>a.issue_month.localeCompare(b.issue_month));
 
 async function loadAll(){
+  pending = lsGet(K_PENDING)||[];
   if(LIVE){
-    const [slots,issues,items] = await Promise.all([
-      api('ns_slots?select=*&order=sort_order'),
-      api('ns_issues?select=*&order=issue_month'),
-      api('ns_items?select=*&order=sort_order')]);
-    S.slots = slots.length?slots:DEFAULT_SLOTS; S.issues=issues; S.items=items;
+    try{
+      const [issues,items] = await Promise.all([rest('ns_issues?select=*&order=issue_month'), rest('ns_items?select=*&order=sort_order')]);
+      S.issues=issues; S.items=items; lsSet(K_CACHE,S);
+      setStat(pending.length?'err':'ok', pending.length?'未保存の変更あり':'読み込み済み');
+    }catch(err){
+      console.error(err);
+      const c=lsGet(K_CACHE); if(c){ S.issues=c.issues||[]; S.items=c.items||[]; }
+      setStat('err','接続できず、端末の控えを表示中');
+    }
+    if(pending.length) flush();
   }else{
-    const d = await localRead();
-    if(d){ S.slots=d.slots; S.issues=d.issues; S.items=d.items; }
-    else { S.slots=[...DEFAULT_SLOTS]; S.issues=[]; S.items=[]; seedMonths(6); await localWrite(); }
+    const c=lsGet(K_CACHE); if(c){ S.issues=c.issues||[]; S.items=c.items||[]; }
+    setStat('ok','この端末に保存');
   }
+  if(!S.issues.length){ await insertIssue({issue_month:thisMonth()}); }
+  pickCurrentIssue();
 }
-async function insert(table,row){
-  if(LIVE){ const r=await api(table,{method:'POST',body:JSON.stringify(row)}); return r[0]; }
-  const rec={id:uid(),...row}; S[table.replace('ns_','')].push(rec); await localWrite(); return rec;
+function pickCurrentIssue(){
+  const saved = (()=>{ try{ return localStorage.getItem(K_ISSUE); }catch(e){ return null; } })();
+  if(saved && S.issues.find(i=>i.id===saved)) { curIssue=saved; return; }
+  const open = S.issues.filter(i=>i.status!=='sent');
+  curIssue = (open[0]||S.issues[S.issues.length-1]).id;
 }
-async function update(table,id,patch){
-  if(LIVE){ const r=await api(`${table}?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(patch)}); return r[0]; }
-  const arr=S[table.replace('ns_','')]; const i=arr.findIndex(x=>x.id===id);
-  arr[i]={...arr[i],...patch}; await localWrite(); return arr[i];
-}
-async function remove(table,id){
-  if(LIVE){ await api(`${table}?id=eq.${id}`,{method:'DELETE'}); return; }
-  const k=table.replace('ns_',''); S[k]=S[k].filter(x=>x.id!==id); await localWrite();
-}
+function setIssue(id){ curIssue=id; try{ localStorage.setItem(K_ISSUE,id); }catch(e){} }
 
-const ym = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-const monthLabel = m => { const [y,mm]=m.split('-'); return y+'.'+mm; };
-const thisMonth = () => ym(new Date());
-const esc = s => (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
-function seedMonths(n){
-  const base=new Date(); base.setDate(1);
-  for(let i=0;i<n;i++){
-    const d=new Date(base.getFullYear(),base.getMonth()+i,1), m=ym(d);
-    if(!S.issues.find(x=>x.issue_month===m))
-      S.issues.push({id:uid(),issue_month:m,headline:'',send_date:null,lead_text:'',status:'planning'});
-  }
-  S.issues.sort((a,b)=>a.issue_month.localeCompare(b.issue_month));
-}
-async function addMonths(n){
-  const last = S.issues.length ? S.issues[S.issues.length-1].issue_month : thisMonth();
-  const [y,m]=last.split('-').map(Number);
-  for(let i=1;i<=n;i++){
-    const key=ym(new Date(y,m-1+i,1));
-    if(S.issues.find(x=>x.issue_month===key)) continue;
-    const r = await insert('ns_issues',{issue_month:key,headline:'',send_date:null,lead_text:'',status:'planning'});
-    if(LIVE) S.issues.push(r);
-  }
-  S.issues.sort((a,b)=>a.issue_month.localeCompare(b.issue_month));
-  render(); toast(n+'ヶ月分の号を作りました');
-}
+/* ---------- 問い合わせ ---------- */
+const issue = () => S.issues.find(i=>i.id===curIssue);
 const itemsOf = (iid,slot) => S.items.filter(i=>i.issue_id===iid && (slot===null?!i.slot:i.slot===slot))
-  .sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
-const stockItems = () => S.items.filter(i=>!i.issue_id);
+  .sort((a,b)=>(a.sort_order||0)-(b.sort_order||0) || (a.captured_at||'').localeCompare(b.captured_at||''));
+const inbox = () => S.items.filter(i=>!i.issue_id).sort((a,b)=>(b.captured_at||'').localeCompare(a.captured_at||''));
+const orderedBlocks = iid => { const o=[]; SLOTS.forEach(s=>itemsOf(iid,s.key).forEach(i=>o.push(i))); itemsOf(iid,null).forEach(i=>o.push(i)); return o; };
+function suggestMonths(ev){ if(!ev) return []; const d=new Date(ev+'T00:00:00'); if(isNaN(d)) return [];
+  return [ym(new Date(d.getFullYear(),d.getMonth()-1,1)), ym(d)]; }
+function nextIssue(){ const is=issue(); const m=is?nextMonthOf(is.issue_month):nextMonthOf(thisMonth()); return S.issues.find(i=>i.issue_month===m); }
 
-/* 開催日から「載せるべき号」を割り出す：開催月とその前月 */
-function suggestMonths(ev){
-  if(!ev) return [];
-  const d=new Date(ev+'T00:00:00'); if(isNaN(d)) return [];
-  const prev=new Date(d.getFullYear(),d.getMonth()-1,1);
-  return [ym(prev), ym(d)];
+/* ---------- 抜け漏れチェック ---------- */
+function checks(is){
+  const out=[]; const blocks=orderedBlocks(is.id);
+  const lead=itemsOf(is.id,'lead')[0], main=itemsOf(is.id,'main')[0];
+  out.push({ok:!!is.headline, label:'ヘッドライン（黒帯）がある', act:'issue'});
+  out.push({ok:!!is.send_date, label:'発行日が入っている', act:'issue'});
+  out.push({ok:!!(lead&&lead.body.trim()), label:'リード文が書けている', act:lead?('item:'+lead.id):'new:lead'});
+  out.push({ok:!!(main&&main.body.trim()), label:'今号の主役に本文がある', act:main?('item:'+main.id):'new:main'});
+  blocks.forEach(b=>{
+    if(b.slot==='lead') return;
+    if(b.image_status==='todo'||b.image_status==='asked')
+      out.push({ok:false,label:b.title+'：バナー画像が'+IMG_STATUS[b.image_status], sub:b.image_note, act:'item:'+b.id});
+    if(b.cta_label && !b.link_url) out.push({ok:false,label:b.title+'：ボタン「'+b.cta_label+'」のリンク先がない', act:'item:'+b.id});
+    if(b.event_date && is.send_date && b.event_date < is.send_date)
+      out.push({ok:false,label:b.title+'：開催日 '+md(b.event_date)+' が発行日より前', act:'item:'+b.id});
+    if(b.status!=='done') out.push({ok:false,info:true,label:b.title+'：まだ「'+ITEM_STATUS[b.status]+'」', act:'item:'+b.id});
+  });
+  if(!blocks.some(b=>b.slot&&b.slot!=='lead') && !itemsOf(is.id,null).length) out.push({ok:false,label:'ブロックがひとつもない', act:'view:issue'});
+  return out;
 }
-function toast(msg){
-  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('on');
-  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('on'),1900);
-}
+const ngCount = is => checks(is).filter(c=>!c.ok&&!c.info).length;
 
-/* ---------------- views ---------------- */
+/* ---------- 書き出し ---------- */
+function blockText(b){
+  const L=[b.title];
+  if(b.body) L.push('',b.body);
+  if(b.cta_label) L.push('','［'+b.cta_label+'］'+(b.link_url?' '+b.link_url:''));
+  const f=[['日　時',[jdate(b.event_date),b.event_time].filter(Boolean).join(' ')],['場　所',b.event_place],
+    ['参加費',b.event_fee],['進行役',b.event_host],['備　考',b.event_extra]].filter(([,v])=>v);
+  if(f.length){ L.push(''); f.forEach(([k,v])=>L.push(k+'： '+v)); }
+  return L.join('\n');
+}
+function issueDateStr(is){ return is.send_date ? is.send_date.replace(/^(\d+)-(\d+)-(\d+)$/,'$1年$2月$3日号') : monthLabel(is.issue_month)+'号'; }
+function fullText(is){
+  const L=[is.headline||'', issueDateStr(is)];
+  orderedBlocks(is.id).forEach(b=>{ if(b.slot==='lead'){ L.push('',b.body||''); } else L.push('','──────────','',blockText(b)); });
+  return L.join('\n');
+}
+async function copyText(t){ try{ await navigator.clipboard.writeText(t); toast('コピーしました'); return true; }
+  catch(e){ toast('コピーできませんでした'); return false; } }
+
+/* ---------- 描画 ---------- */
 function render(){
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.view===view));
-  document.getElementById('fab').style.display = view==='settings'?'none':'';
-  document.getElementById('main').innerHTML =
-    ({matrix:vMatrix,issues:vIssues,stock:vStock,settings:vSettings})[view]();
-  bind();
+  const nI=inbox().length; document.getElementById('nInbox').textContent=nI?nI:'';
+  const is=issue(); const nC=is?ngCount(is):0; document.getElementById('nCheck').textContent=nC?nC:'';
+  document.getElementById('main').innerHTML = renderBannerHTML() + ({inbox:vInbox,issue:vIssue,check:vCheck})[view]();
+  try{ localStorage.setItem(K_VIEW,view); }catch(e){}
 }
-
-function vMatrix(){
-  if(!S.issues.length) return emptyState();
-  const head = '<tr><th class="mcol">号</th>'+S.slots.map(s=>`<th>${esc(s.label)}</th>`).join('')+'<th>自由</th></tr>';
-  const cellFor = (is,key)=>{
-    const it=itemsOf(is.id,key);
-    const cls = it.length ? (it.every(x=>x.status==='done')?'filled':'draft') : '';
-    return `<td class="cell" data-open="${is.id}"><span class="dot ${cls}"></span>${it.length>1?`<span class="cnt">${it.length}</span>`:''}</td>`;
-  };
-  const rows = S.issues.map(is=>`<tr class="${is.status==='sent'?'sent':''}">
-    <th class="mcol"><span class="mlabel">${monthLabel(is.issue_month)}</span>
-    <span class="mtheme">${esc(is.headline)||'ヘッドライン未定'}</span></th>
-    ${S.slots.map(s=>cellFor(is,s.key)).join('')}${cellFor(is,null)}</tr>`).join('');
-  return `<p class="hint">枠の埋まり具合を一覧します。マスをタップするとその号を開きます。</p>
-    <div class="matrixwrap"><table class="matrix"><thead>${head}</thead><tbody>${rows}</tbody></table></div>
-    <div class="legend"><span><i class="dot filled"></i>確定</span><span><i class="dot draft"></i>制作中</span><span><i class="dot"></i>空き</span></div>
-    <div style="margin-top:16px"><button class="btn block" data-more="3">先の号を3ヶ月分つくる</button></div>`;
+function renderBannerHTML(){
+  if(!LIVE || !pending.length) return '';
+  return `<div class="banner" id="banner">未保存の変更が ${pending.length} 件あります<span class="sp"></span><button data-act="retry">もう一度保存</button></div>`;
 }
+function renderBanner(){ const b=document.getElementById('banner'); const h=renderBannerHTML();
+  if(b && !h) b.remove(); else if(!b && h) document.getElementById('main').insertAdjacentHTML('afterbegin',h);
+  else if(b) b.outerHTML=h; }
 
-function vIssues(){
-  if(!S.issues.length) return emptyState();
-  return `<p class="hint">号ごとに中身を組み立てます。案内ブロックは何本でも入ります。</p>`
-   + S.issues.map(is=>{
-      const open = openIssue===is.id;
-      const n = S.items.filter(i=>i.issue_id===is.id).length;
-      return `<div class="issue">
-        <div class="issue-head" data-toggle="${is.id}">
-          <span class="issue-month">${monthLabel(is.issue_month)}</span>
-          <span class="issue-theme ${is.headline?'set':''}">${esc(is.headline)||'ヘッドライン未定'}</span>
-          <span class="pill ${is.status}">${ISSUE_STATUS[is.status]}${n?' · '+n:''}</span>
-          <span class="chev">${open?'▲':'▼'}</span>
-        </div>${open?issueBody(is):''}</div>`;
-   }).join('')
-   + `<div style="margin-top:14px"><button class="btn block" data-more="3">先の号を3ヶ月分つくる</button></div>`;
-}
-
-function issueBody(is){
-  const blocks = S.slots.map(s=>{
-    const its=itemsOf(is.id,s.key);
-    return `<div class="slot"><div class="slot-label"><span>${esc(s.label)}</span><span class="rule"></span>
-      <button class="add" data-newitem="${is.id}|${s.key}">＋</button></div>
-      ${its.length?its.map(itemRow).join(''):`<div class="empty-slot" data-newitem="${is.id}|${s.key}">まだ空です。タップして入れる</div>`}
-    </div>`;}).join('');
-  const free=itemsOf(is.id,null);
-  return `<div class="issue-body">${blocks}
-    <div class="slot"><div class="slot-label"><span>自由枠</span><span class="rule"></span>
-      <button class="add" data-newitem="${is.id}|">＋</button></div>
-      ${free.length?free.map(itemRow).join(''):`<div class="empty-slot" data-newitem="${is.id}|">この号だけの項目を足す</div>`}</div>
-    <div class="issue-actions">
-      <button class="btn" data-editissue="${is.id}">号の設定</button>
-      <button class="btn" data-preview="${is.id}">通しで見る</button>
-      <button class="btn ghost" data-pull="${is.id}">ネタ帳から入れる</button>
-    </div></div>`;
-}
-
-function itemRow(i){
+function itemRow(i,{showSlot=false}={}){
   const tags=[];
-  if(i.event_date) tags.push(`<span class="tag">${i.event_date.slice(5).replace('-','/')} 開催</span>`);
-  if(i.image_status && i.image_status!=='none')
-    tags.push(`<span class="tag ${i.image_status==='ready'?'ok':'warn'}">${IMG_STATUS[i.image_status]}</span>`);
+  if(showSlot && i.slot) tags.push(`<span class="tag">${esc(slotOf(i.slot)?.label||i.slot)}</span>`);
+  if(i.event_date) tags.push(`<span class="tag">${md(i.event_date)} 開催</span>`);
+  if(!i.issue_id && i.event_date){ const s=suggestMonths(i.event_date).map(monthLabel).join('・'); if(s) tags.push(`<span class="tag">${s}号向き</span>`); }
+  if(i.image_status && i.image_status!=='none') tags.push(`<span class="tag ${i.image_status==='ready'?'ok':'warn'}">${IMG_STATUS[i.image_status]}</span>`);
   if(i.cta_label && !i.link_url) tags.push('<span class="tag warn">リンク未</span>');
-  if(!i.issue_id && i.event_date){
-    const s=suggestMonths(i.event_date).map(monthLabel).join('・');
-    if(s) tags.push(`<span class="tag">${s}号向き</span>`);
-  }
-  return `<div class="item ${i.status}" data-edititem="${i.id}"><span class="bar"></span>
-    <span class="item-main"><span class="item-title">${esc(i.title)}</span>
-    <span class="item-meta"><span>${ITEM_STATUS[i.status]}</span>${i.owner?`<span>${esc(i.owner)}</span>`:''}${tags.join('')}</span>
-    </span></div>`;
+  if(i.is_template) tags.push('<span class="tag tpl">毎号</span>');
+  const plain = i.slot==='lead';
+  const snippet = plain && i.body ? `<div class="item-snippet">${esc(i.body)}</div>` : '';
+  return `<div class="item ${i.status}" data-item="${i.id}"><span class="bar"></span>
+    <span class="item-main"><span class="item-title">${esc(plain ? (i.body ? i.body.split('\n')[0] : '（まだ書いていません）') : i.title)}</span>${''}
+    <span class="item-meta"><span>${ITEM_STATUS[i.status]||''}</span>${tags.join('')}</span></span></div>`;
 }
 
-function vStock(){
-  const all=stockItems();
-  const list = stockFilter==='all'?all:all.filter(i=>stockFilter==='none'?!i.slot:i.slot===stockFilter);
-  const chips=['all','none',...S.slots.map(s=>s.key)].map(k=>{
-    const label=k==='all'?'すべて':k==='none'?'枠なし':(S.slots.find(s=>s.key===k)||{}).label;
-    return `<button data-filter="${k}" class="${stockFilter===k?'on':''}">${esc(label)}</button>`;}).join('');
-  return `<p class="hint">号に入れる前のネタ置き場です。開催日を入れておくと、載せるべき号の目安が出ます。</p>
-    <div class="filterbar">${chips}</div>
-    ${list.length?list.map(itemRow).join(''):`<div class="empty-slot" style="text-align:center;padding:26px" data-newitem="|">右下の「＋ ネタ」から入れる</div>`}`;
+function vInbox(){
+  const list=inbox();
+  return `<form class="capture" id="capture"><input type="text" id="capIn" placeholder="思いついたことを一行で" autocomplete="off" enterkeyhint="done"><button type="submit">拾う</button></form>
+    <p class="hint">拾ったネタをタップすると、号に入れたり開催日を付けたりできます。</p>
+    ${list.length ? list.map(i=>itemRow(i,{showSlot:true})).join('') : `<div class="nothing">まだ何もありません。<br>上の欄に一行書いて「拾う」。</div>`}`;
 }
 
-function vSettings(){
-  return `<p class="hint">いまのモード：<strong>${LIVE?'Supabase 接続':'お試し（ブラウザ内保存）'}</strong></p>
-  <div class="issue"><div class="issue-body">
-    <div class="slot-label"><span>枠</span><span class="rule"></span><button class="add" data-newslot="1">＋</button></div>
-    ${S.slots.map(s=>`<div class="item" data-editslot="${s.key}"><span class="bar"></span>
-      <span class="item-main"><span class="item-title">${esc(s.label)}</span>
-      <span class="item-meta"><span>${esc(s.key)}</span></span></span></div>`).join('')}
-  </div></div>`;
-}
-function emptyState(){
-  return `<div class="issue"><div class="issue-body" style="text-align:center;padding:30px 16px">
-    <p class="hint">号がまだありません。</p>
-    <button class="btn primary" data-more="6">今月から6ヶ月分つくる</button></div></div>`;
+function vIssue(){
+  const is=issue(); if(!is) return '<div class="nothing">号がありません</div>';
+  const opts=S.issues.map(i=>`<option value="${i.id}" ${i.id===is.id?'selected':''}>${monthLabel(i.issue_month)}${i.status==='sent'?'（配信済）':''}</option>`).join('');
+  const slots=SLOTS.map(s=>{
+    const its=itemsOf(is.id,s.key);
+    const canAdd = s.multi || !its.length;
+    const empty = its.length ? '' : `<div class="empty" data-new="${s.key}"><span>＋ 書く</span>${s.plain?'':`<span data-pull="${s.key}">ネタから入れる</span>`}</div>`;
+    const more = its.length && s.multi ? `<div class="empty" data-new="${s.key}"><span>＋ もう一本</span><span data-pull="${s.key}">ネタから入れる</span></div>` : '';
+    return `<div class="slot"><div class="slot-label"><span>${esc(s.label)}</span><span class="rule"></span>${canAdd?`<button class="add" data-new="${s.key}">＋</button>`:''}</div>
+      ${its.map(i=>itemRow(i)).join('')}${empty}${more}</div>`;
+  }).join('');
+  const free=itemsOf(is.id,null);
+  const freeBlock = `<div class="slot"><div class="slot-label"><span>この号だけの項目</span><span class="rule"></span><button class="add" data-new="">＋</button></div>
+    ${free.map(i=>itemRow(i)).join('')}${free.length?'':`<div class="empty" data-new=""><span>＋ 足す</span><span data-pull="">ネタから入れる</span></div>`}</div>`;
+  return `<div class="issuebar">
+      <span class="issuepick"><select id="issueSel">${opts}</select></span>
+      <span class="pill ${is.status}">${ISSUE_STATUS[is.status]}</span><span class="sp"></span>
+      <button class="btn ghost" data-act="issue">号の設定</button>
+    </div>
+    <div class="headline ${is.headline?'set':''}">${esc(is.headline)||'ヘッドライン未定 — 「号の設定」から'}</div>
+    ${slots}${freeBlock}
+    <div class="actions"><button class="btn" data-act="preview">通しで見る</button><button class="btn ghost" data-act="newissue">次の号をつくる</button></div>`;
 }
 
-/* ---------------- sheets ---------------- */
+function vCheck(){
+  const is=issue(); if(!is) return '';
+  const cs=checks(is); const ng=cs.filter(c=>!c.ok);
+  const rows = cs.map(c=>`<div class="chk ${c.ok?'ok':(c.info?'info':'ng')} ${c.act?'link':''}" data-check="${c.act||''}"><i class="${c.ok?'ok':(c.info?'info':'ng')}"></i><span>${esc(c.label)}${c.sub?`<span class="sub">${esc(c.sub)}</span>`:''}</span></div>`).join('');
+  const blocks=orderedBlocks(is.id);
+  const copies = blocks.map(b=>`<div class="copyrow"><span class="t">${esc(b.slot==='lead'?'リード文':b.title)}</span><span class="s">${esc(slotOf(b.slot)?.label||'自由')}</span><button data-copy="${b.id}">コピー</button></div>`).join('');
+  return `<p class="hint">${monthLabel(is.issue_month)}号 ${is.send_date?jdate(is.send_date)+' 発行':''}</p>
+    <div class="checklist">${ng.length?rows:`<div class="allgood">✓ 抜け漏れはありません</div>${rows}`}</div>
+    <div class="slot-label"><span>ブロックごとにコピー</span><span class="rule"></span></div>
+    ${copies || '<div class="nothing">まだブロックがありません</div>'}
+    <div class="actions"><button class="btn" data-act="preview">通しで見る</button><button class="btn" data-act="copyall">全文をコピー</button></div>
+    <div style="margin-top:22px"><button class="btn primary block" data-act="sent" ${is.status==='sent'?'disabled':''}>${is.status==='sent'?'この号は配信済みです':'配信済みにして次号をつくる'}</button></div>`;
+}
+
+/* ---------- シート ---------- */
 function sheet(html){
   const d=document.createElement('div'); d.className='scrim';
   d.innerHTML=`<div class="sheet">${html}</div>`;
   d.addEventListener('click',e=>{ if(e.target===d) d.remove(); });
   document.body.appendChild(d); return d;
 }
+function segControl(d,sel,init){ let v=init; d.querySelector(sel).addEventListener('click',e=>{ const b=e.target.closest('button[data-v]'); if(!b) return; v=b.dataset.v;
+  d.querySelectorAll(sel+' button').forEach(x=>x.classList.toggle('on',x===b)); }); return ()=>v; }
+const segHTML = (id,map,cur) => `<div class="seg" id="${id}">${Object.entries(map).map(([k,v])=>`<button type="button" data-v="${k}" class="${cur===k?'on':''}">${v}</button>`).join('')}</div>`;
 
-function itemSheet(item,preset={}){
+/* ブロック編集 */
+function itemSheet(item, preset={}){
   const isNew=!item;
-  const i = item || {title:'',slot:preset.slot??'',issue_id:preset.issue_id??null,status:'idea',
-    image_status:'none',image_note:'',cta_label:'',link_url:'',body:'',owner:'',
-    event_date:'',event_time:'',event_place:'',event_fee:'',event_host:'',event_extra:''};
-  const slotOpts=`<option value="">枠なし・自由枠</option>`+S.slots.map(s=>`<option value="${s.key}" ${i.slot===s.key?'selected':''}>${esc(s.label)}</option>`).join('');
-  const issueOpts=`<option value="">ネタ帳に置く（号は未定）</option>`+S.issues.map(is=>`<option value="${is.id}" ${i.issue_id===is.id?'selected':''}>${monthLabel(is.issue_month)}${is.headline?' '+esc(is.headline):''}</option>`).join('');
+  const i = item || {title:preset.title||'',slot:preset.slot??null,issue_id:preset.issue_id??null,status:'idea',
+    image_status:'none',image_note:'',cta_label:'',link_url:'',body:preset.body||'',
+    event_date:'',event_time:'',event_place:'',event_fee:'',event_host:'',event_extra:'',is_template:false};
+  const sd=slotOf(i.slot); const plain = !!(sd&&sd.plain);
+  const inIssue = !!i.issue_id;
+  const where = inIssue ? (sd?sd.label:'この号だけの項目') + '・' + monthLabel(S.issues.find(x=>x.id===i.issue_id)?.issue_month) : 'ネタ帳';
+  const tpl = (sd&&sd.template) || i.is_template;
   const d=sheet(`
-    <h2>${isNew?'ネタを追加':'ブロックを編集'}</h2>
-    <p class="sh-sub">見出し・本文・バナー・ボタン・開催情報がひとまとまりです。</p>
-    <label class="f"><span>見出し</span><input type="text" id="f_title" value="${esc(i.title)}" placeholder="例：創造プロセス倶楽部オンライン"></label>
+    <h2>${isNew?'書く':'ブロックを編集'}</h2>
+    <p class="sh-sub">${esc(where)}</p>
+    ${plain?'':`<label class="f"><span>見出し</span><input type="text" id="f_title" value="${esc(i.title)}" placeholder="例：創造プロセス倶楽部オンライン"></label>`}
+    <label class="f"><span>進み具合</span>${segHTML('f_status',ITEM_STATUS,i.status)}</label>
+    <label class="f"><span>本文</span><textarea id="f_body" ${plain?'style="min-height:160px"':''} placeholder="${plain?'季節の導入から今号の趣旨へ':'ニュースレターにそのまま載る文章'}">${esc(i.body)}</textarea></label>
+    ${plain?'':`
     <div class="row">
-      <label class="f"><span>枠</span><select id="f_slot">${slotOpts}</select></label>
-      <label class="f"><span>載せる号</span><select id="f_issue">${issueOpts}</select></label>
+      <label class="f"><span>バナー画像</span><select id="f_img">${Object.entries(IMG_STATUS).map(([k,v])=>`<option value="${k}" ${i.image_status===k?'selected':''}>${v}</option>`).join('')}</select></label>
+      <label class="f"><span>画像メモ</span><input type="text" id="f_imgnote" value="${esc(i.image_note)}" placeholder="使う写真、文字入れなど"></label>
     </div>
-    <label class="f"><span>進み具合</span><div class="seg" id="f_status">
-      ${Object.entries(ITEM_STATUS).map(([k,v])=>`<button data-v="${k}" class="${i.status===k?'on':''}">${v}</button>`).join('')}</div></label>
-    <label class="f"><span>本文</span><textarea id="f_body" placeholder="ブロックの本文。ニュースレターにそのまま載る文章">${esc(i.body)}</textarea></label>
-    <label class="f"><span>バナー画像</span><select id="f_img">
-      ${Object.entries(IMG_STATUS).map(([k,v])=>`<option value="${k}" ${i.image_status===k?'selected':''}>${v}</option>`).join('')}</select></label>
-    <label class="f"><span>画像メモ</span><input type="text" id="f_imgnote" value="${esc(i.image_note)}" placeholder="使う写真、文字入れの指示など"></label>
     <div class="row">
       <label class="f"><span>ボタンの文言</span><input type="text" id="f_cta" value="${esc(i.cta_label)}" placeholder="◯◯の詳細を見る"></label>
-      <label class="f"><span>リンク先</span><input type="text" id="f_link" value="${esc(i.link_url)}" placeholder="https://"></label>
+      <label class="f"><span>リンク先</span><input type="url" id="f_link" value="${esc(i.link_url)}" placeholder="https://"></label>
     </div>
     <details class="fold" ${i.event_date||i.event_place?'open':''}>
       <summary>開催情報</summary>
@@ -422,220 +476,197 @@ function itemSheet(item,preset={}){
         <label class="f"><span>場所</span><input type="text" id="f_eplace" value="${esc(i.event_place)}" placeholder="zoom"></label>
         <label class="f"><span>参加費</span><input type="text" id="f_efee" value="${esc(i.event_fee)}" placeholder="3,000円"></label>
       </div>
-      <label class="f"><span>進行役</span><input type="text" id="f_ehost" value="${esc(i.event_host)}" placeholder="田村洋一"></label>
+      <label class="f"><span>進行役</span><input type="text" id="f_ehost" value="${esc(i.event_host)}"></label>
       <label class="f"><span>参考書籍など</span><input type="text" id="f_eextra" value="${esc(i.event_extra)}"></label>
     </details>
-    <label class="f"><span>担当</span><input type="text" id="f_owner" value="${esc(i.owner)}" placeholder="千賀子 / だんな"></label>
-    <div class="sheet-actions">${isNew?'':'<button class="btn danger" id="f_del">削除</button>'}
+    <label class="chk-tpl"><input type="checkbox" id="f_tpl" ${tpl?'checked':''}> 毎号入れる（次の号をつくるとき、このブロックを引き継ぐ）</label>`}
+    <div class="sheet-actions">
+      ${isNew?'':'<button class="btn danger" id="f_del">削除</button>'}
+      ${isNew||!inIssue?'':'<button class="btn ghost" id="f_out">ネタ帳に戻す</button>'}
       <span class="sp"></span><button class="btn" id="f_cancel">やめる</button>
       <button class="btn primary" id="f_save">保存</button></div>`);
-  let status=i.status;
-  d.querySelector('#f_status').addEventListener('click',e=>{
-    const b=e.target.closest('button[data-v]'); if(!b) return; status=b.dataset.v;
-    d.querySelectorAll('#f_status button').forEach(x=>x.classList.toggle('on',x===b));});
+  const getStatus=segControl(d,'#f_status',i.status);
   d.querySelector('#f_cancel').onclick=()=>d.remove();
-  if(!isNew) d.querySelector('#f_del').onclick=async()=>{
-    if(!confirm('このブロックを削除します。よろしいですか？')) return;
-    await remove('ns_items',i.id); S.items=S.items.filter(x=>x.id!==i.id);
-    d.remove(); render(); toast('削除しました');};
+  if(!isNew){
+    d.querySelector('#f_del').onclick=async()=>{ if(!confirm('このブロックを削除します。よろしいですか？')) return;
+      await deleteItem(i.id); d.remove(); render(); toast('削除しました'); };
+    const out=d.querySelector('#f_out'); if(out) out.onclick=async()=>{ await updateItem(i.id,{issue_id:null,slot:null}); d.remove(); render(); toast('ネタ帳に戻しました'); };
+  }
   d.querySelector('#f_save').onclick=async()=>{
-    const title=d.querySelector('#f_title').value.trim();
-    if(!title){ toast('見出しを入れてください'); return; }
-    const v=id=>d.querySelector(id).value.trim();
-    const patch={title, slot:d.querySelector('#f_slot').value||null,
-      issue_id:d.querySelector('#f_issue').value||null, status,
-      body:d.querySelector('#f_body').value, image_status:d.querySelector('#f_img').value,
-      image_note:v('#f_imgnote'), cta_label:v('#f_cta'), link_url:v('#f_link'),
-      event_date:v('#f_edate')||null, event_time:v('#f_etime'), event_place:v('#f_eplace'),
-      event_fee:v('#f_efee'), event_host:v('#f_ehost'), event_extra:v('#f_eextra'), owner:v('#f_owner')};
-    if(isNew){ const r=await insert('ns_items',{...patch,sort_order:S.items.length}); if(LIVE) S.items.push(r); }
-    else { const r=await update('ns_items',i.id,patch); if(LIVE){ const ix=S.items.findIndex(x=>x.id===i.id); S.items[ix]=r; } }
-    d.remove(); render(); toast(isNew?'追加しました':'保存しました');};
+    const v=id=>{ const el=d.querySelector(id); return el?el.value.trim():''; };
+    const body=d.querySelector('#f_body').value;
+    let title = plain ? 'リード文' : v('#f_title');
+    if(!plain && !title){ toast('見出しを入れてください'); return; }
+    const patch={title, body, status:getStatus()};
+    if(plain) patch.is_template=false;
+    else{
+      Object.assign(patch,{image_status:d.querySelector('#f_img').value, image_note:v('#f_imgnote'), cta_label:v('#f_cta'), link_url:v('#f_link'),
+        event_date:v('#f_edate')||null, event_time:v('#f_etime'), event_place:v('#f_eplace'), event_fee:v('#f_efee'),
+        event_host:v('#f_ehost'), event_extra:v('#f_eextra'), is_template:d.querySelector('#f_tpl').checked});
+    }
+    if(isNew) await insertItem({...patch, slot:i.slot, issue_id:i.issue_id, sort_order:S.items.length});
+    else await updateItem(i.id,patch);
+    d.remove(); render(); toast(isNew?'入れました':'保存しました');
+  };
+  setTimeout(()=>{ const f=d.querySelector(plain?'#f_body':'#f_title'); if(f && isNew) f.focus(); },50);
 }
 
-function issueSheet(is){
-  const d=sheet(`<h2>${monthLabel(is.issue_month)} 号の設定</h2>
-    <label class="f"><span>ヘッドライン（黒帯）</span><input type="text" id="i_head" value="${esc(is.headline)}" placeholder="今年の夏は、現実を見てみる。"></label>
-    <label class="f"><span>発行日</span><input type="date" id="i_date" value="${is.send_date||''}"></label>
-    <label class="f"><span>状態</span><div class="seg" id="i_status">
-      ${Object.entries(ISSUE_STATUS).map(([k,v])=>`<button data-v="${k}" class="${is.status===k?'on':''}">${v}</button>`).join('')}</div></label>
-    <label class="f"><span>リード文</span><textarea id="i_lead" style="min-height:120px" placeholder="季節の導入から今号の趣旨へ">${esc(is.lead_text)}</textarea></label>
-    <div class="sheet-actions"><span class="sp"></span>
-      <button class="btn" id="i_cancel">やめる</button><button class="btn primary" id="i_save">保存</button></div>`);
-  let status=is.status;
-  d.querySelector('#i_status').addEventListener('click',e=>{
-    const b=e.target.closest('button[data-v]'); if(!b) return; status=b.dataset.v;
-    d.querySelectorAll('#i_status button').forEach(x=>x.classList.toggle('on',x===b));});
-  d.querySelector('#i_cancel').onclick=()=>d.remove();
-  d.querySelector('#i_save').onclick=async()=>{
-    const patch={headline:d.querySelector('#i_head').value.trim(),
-      send_date:d.querySelector('#i_date').value||null, status, lead_text:d.querySelector('#i_lead').value};
-    const r=await update('ns_issues',is.id,patch);
-    if(LIVE){ const ix=S.issues.findIndex(x=>x.id===is.id); S.issues[ix]=r; }
-    d.remove(); render(); toast('保存しました');};
-}
-
-function previewSheet(is){
-  const ordered=[];
-  S.slots.forEach(s=>itemsOf(is.id,s.key).forEach(i=>ordered.push(i)));
-  itemsOf(is.id,null).forEach(i=>ordered.push(i));
-  const dateStr = is.send_date ? is.send_date.replace(/-/g,'/').replace(/^(\d+)\/(\d+)\/(\d+)$/,'$1年$2月$3日号') : monthLabel(is.issue_month)+'号';
-  const blocks = ordered.map(i=>{
-    const facts=[['日　時',[i.event_date?i.event_date.replace(/-/g,'/'):'',i.event_time].filter(Boolean).join(' ')],
-      ['場　所',i.event_place],['参加費',i.event_fee],['進行役',i.event_host],['備　考',i.event_extra]]
-      .filter(([,v])=>v).map(([k,v])=>`<div>${k}： ${esc(v)}</div>`).join('');
-    return `<div class="pv-block">
-      <div class="pv-h">${esc(i.title)}</div>
-      ${i.image_status&&i.image_status!=='none'?`<div class="pv-img">バナー：${IMG_STATUS[i.image_status]}${i.image_note?' — '+esc(i.image_note):''}</div>`:''}
-      ${i.body?`<div class="pv-body">${esc(i.body)}</div>`:''}
-      ${i.cta_label?`<div class="pv-cta">${esc(i.cta_label)}</div>`:''}
-      ${facts?`<div class="pv-facts">${facts}</div>`:''}</div>`;}).join('');
-  const d=sheet(`<h2>通しプレビュー</h2><p class="sh-sub">Wixに組む前の並び確認です。</p>
-    <div class="pv">
-      <div class="pv-band">${esc(is.headline)||'ヘッドライン未定'}</div>
-      <div class="pv-date">${dateStr}</div>
-      ${is.lead_text?`<div class="pv-lead">${esc(is.lead_text)}</div>`:''}
-      ${blocks||'<div class="pv-lead" style="color:#a9a4a0">まだ中身がありません</div>'}
+/* ネタ帳の一行に対するメニュー */
+function inboxMenu(i){
+  const is=issue(); const nx=nextIssue();
+  const d=sheet(`<h2>${esc(i.title)}</h2><p class="sh-sub">${i.event_date?md(i.event_date)+' 開催 ・ ':''}拾った日 ${jdate((i.captured_at||'').slice(0,10))}</p>
+    <div class="menu">
+      <button data-go="cur"><b>${monthLabel(is.issue_month)}</b>今号に入れる</button>
+      <button data-go="next"><b>${nx?monthLabel(nx.issue_month):monthLabel(nextMonthOf(is.issue_month))}</b>次の号に入れる${nx?'':'（号を新しく作る）'}</button>
+      <button data-go="pick"><b>…</b>ほかの号を選ぶ</button>
+      <button data-go="edit"><b>✎</b>中身を書く・開催日を付ける</button>
+      <button data-go="del" style="color:var(--bad)"><b>×</b>消す</button>
     </div>
-    <div class="sheet-actions" style="margin-top:14px">
-      <button class="btn" id="pv_copy">本文をコピー</button><span class="sp"></span>
-      <button class="btn" id="pv_close">閉じる</button></div>`);
-  d.querySelector('#pv_close').onclick=()=>d.remove();
-  d.querySelector('#pv_copy').onclick=async()=>{
-    const lines=[is.headline||'', dateStr, '', is.lead_text||''];
-    ordered.forEach(i=>{
-      lines.push('','──────────','', i.title);
-      if(i.body) lines.push('', i.body);
-      if(i.cta_label) lines.push('', '［'+i.cta_label+'］'+(i.link_url?' '+i.link_url:''));
-      const f=[['日　時',[i.event_date,i.event_time].filter(Boolean).join(' ')],['場　所',i.event_place],
-        ['参加費',i.event_fee],['進行役',i.event_host],['備　考',i.event_extra]].filter(([,v])=>v);
-      if(f.length){ lines.push(''); f.forEach(([k,v])=>lines.push(k+'： '+v)); }
-    });
-    try{ await navigator.clipboard.writeText(lines.join('\n')); toast('コピーしました'); }
-    catch(e){ toast('コピーできませんでした'); }};
+    <div class="sheet-actions"><span class="sp"></span><button class="btn" id="m_close">閉じる</button></div>`);
+  d.querySelector('#m_close').onclick=()=>d.remove();
+  d.addEventListener('click',async e=>{
+    const b=e.target.closest('[data-go]'); if(!b) return;
+    const go=b.dataset.go;
+    if(go==='edit'){ d.remove(); itemSheet(i); return; }
+    if(go==='del'){ if(!confirm('このネタを消します。よろしいですか？')) return; await deleteItem(i.id); d.remove(); render(); toast('消しました'); return; }
+    let target=null;
+    if(go==='cur') target=is;
+    else if(go==='next'){ target = nx || await insertIssue({issue_month:nextMonthOf(is.issue_month)}); }
+    else if(go==='pick'){ d.remove(); pickIssueSheet(i); return; }
+    d.remove(); slotPickSheet(i,target);
+  });
 }
-
-function pullSheet(issueId){
-  const stock=stockItems();
-  if(!stock.length){ toast('ネタ帳がまだ空です'); return; }
-  const d=sheet(`<h2>ネタ帳から入れる</h2><p class="sh-sub">この号に移す項目を選びます。</p>
-    ${stock.map(i=>`<div class="item ${i.status}" data-pick="${i.id}"><span class="bar"></span>
-      <span class="item-main"><span class="item-title">${esc(i.title)}</span>
-      <span class="item-meta"><span>${ITEM_STATUS[i.status]}</span>${i.event_date?`<span class="tag">${i.event_date.slice(5).replace('-','/')} 開催</span>`:''}</span></span></div>`).join('')}
+function pickIssueSheet(i){
+  const d=sheet(`<h2>どの号に入れますか</h2>
+    <div class="menu">${S.issues.filter(x=>x.status!=='sent').map(x=>`<button data-iss="${x.id}"><b>${monthLabel(x.issue_month)}</b>${esc(x.headline)||'ヘッドライン未定'}</button>`).join('')}
+    <button data-iss="__new"><b>＋</b>さらに先の号をつくる</button></div>
     <div class="sheet-actions"><span class="sp"></span><button class="btn" id="p_close">閉じる</button></div>`);
   d.querySelector('#p_close').onclick=()=>d.remove();
-  d.addEventListener('click',async e=>{
-    const el=e.target.closest('[data-pick]'); if(!el) return;
-    const r=await update('ns_items',el.dataset.pick,{issue_id:issueId});
-    if(LIVE){ const ix=S.items.findIndex(x=>x.id===el.dataset.pick); S.items[ix]=r; }
-    d.remove(); render(); toast('この号に入れました');});
+  d.addEventListener('click',async e=>{ const b=e.target.closest('[data-iss]'); if(!b) return;
+    let t; if(b.dataset.iss==='__new'){ const last=S.issues[S.issues.length-1]; t=await insertIssue({issue_month:nextMonthOf(last.issue_month)}); }
+    else t=S.issues.find(x=>x.id===b.dataset.iss);
+    d.remove(); slotPickSheet(i,t); });
+}
+function slotPickSheet(i,target){
+  const d=sheet(`<h2>${monthLabel(target.issue_month)}号のどこに</h2>
+    <div class="menu">${SLOTS.filter(s=>!s.plain).map(s=>{ const n=itemsOf(target.id,s.key).length; const full=!s.multi&&n>0;
+      return `<button data-slot="${s.key}" ${full?'disabled style="opacity:.4"':''}><b>${n?n+'本':'空き'}</b>${esc(s.label)}${full?'（埋まっています）':''}</button>`;}).join('')}
+      <button data-slot=""><b>自由</b>この号だけの項目</button></div>
+    <div class="sheet-actions"><span class="sp"></span><button class="btn" id="s_close">閉じる</button></div>`);
+  d.querySelector('#s_close').onclick=()=>d.remove();
+  d.addEventListener('click',async e=>{ const b=e.target.closest('button[data-slot]'); if(!b||b.disabled) return;
+    const slot=b.dataset.slot||null; const sd=slotOf(slot);
+    await updateItem(i.id,{issue_id:target.id,slot,is_template:!!(sd&&sd.template)||!!i.is_template});
+    d.remove(); if(target.id!==curIssue) setIssue(target.id); view='issue'; render(); toast(monthLabel(target.issue_month)+'号に入れました'); });
+}
+/* 号の中から「ネタから入れる」 */
+function pullSheet(slotKey){
+  const is=issue(); const stock=inbox();
+  if(!stock.length){ toast('ネタ帳が空です'); return; }
+  const sd=slotOf(slotKey);
+  const d=sheet(`<h2>ネタから入れる</h2><p class="sh-sub">${esc(sd?sd.label:'この号だけの項目')}に入れるネタを選びます。</p>
+    ${stock.map(i=>`<div class="item ${i.status}" data-pick="${i.id}"><span class="bar"></span><span class="item-main"><span class="item-title">${esc(i.title)}</span>
+      <span class="item-meta">${i.event_date?`<span class="tag">${md(i.event_date)} 開催</span>`:''}</span></span></div>`).join('')}
+    <div class="sheet-actions"><span class="sp"></span><button class="btn" id="p_close">閉じる</button></div>`);
+  d.querySelector('#p_close').onclick=()=>d.remove();
+  d.addEventListener('click',async e=>{ const el=e.target.closest('[data-pick]'); if(!el) return;
+    await updateItem(el.dataset.pick,{issue_id:is.id,slot:slotKey||null,is_template:!!(sd&&sd.template)});
+    d.remove(); render(); toast('入れました'); });
+}
+/* 号の設定 */
+function issueSheet(is){
+  const d=sheet(`<h2>${monthLabel(is.issue_month)}号の設定</h2>
+    <label class="f"><span>ヘッドライン（黒帯）</span><input type="text" id="i_head" value="${esc(is.headline)}" placeholder="今年の夏は、現実を見てみる。"></label>
+    <label class="f"><span>発行日</span><input type="date" id="i_date" value="${is.send_date||''}"></label>
+    <label class="f"><span>状態</span>${segHTML('i_status',ISSUE_STATUS,is.status)}</label>
+    <div class="sheet-actions"><span class="sp"></span><button class="btn" id="i_cancel">やめる</button><button class="btn primary" id="i_save">保存</button></div>`);
+  const getStatus=segControl(d,'#i_status',is.status);
+  d.querySelector('#i_cancel').onclick=()=>d.remove();
+  d.querySelector('#i_save').onclick=async()=>{
+    await updateIssue(is.id,{headline:d.querySelector('#i_head').value.trim(), send_date:d.querySelector('#i_date').value||null, status:getStatus()});
+    d.remove(); render(); toast('保存しました'); };
+}
+/* 通しプレビュー */
+function previewSheet(is){
+  const blocks=orderedBlocks(is.id); const lead=blocks.find(b=>b.slot==='lead');
+  const html=blocks.filter(b=>b.slot!=='lead').map(b=>{
+    const facts=[['日　時',[jdate(b.event_date),b.event_time].filter(Boolean).join(' ')],['場　所',b.event_place],['参加費',b.event_fee],['進行役',b.event_host],['備　考',b.event_extra]]
+      .filter(([,v])=>v).map(([k,v])=>`<div>${k}： ${esc(v)}</div>`).join('');
+    return `<div class="pv-block"><div class="pv-h">${esc(b.title)}</div>
+      ${b.image_status&&b.image_status!=='none'?`<div class="pv-img">バナー：${IMG_STATUS[b.image_status]}${b.image_note?' — '+esc(b.image_note):''}</div>`:''}
+      ${b.body?`<div class="pv-body">${esc(b.body)}</div>`:''}${b.cta_label?`<div class="pv-cta">${esc(b.cta_label)}</div>`:''}${facts?`<div class="pv-facts">${facts}</div>`:''}</div>`;}).join('');
+  const d=sheet(`<h2>通しプレビュー</h2><p class="sh-sub">Wix に組む前の並び確認です。</p>
+    <div class="pv"><div class="pv-band">${esc(is.headline)||'ヘッドライン未定'}</div><div class="pv-date">${issueDateStr(is)}</div>
+      ${lead&&lead.body?`<div class="pv-lead">${esc(lead.body)}</div>`:''}${html||'<div class="pv-lead" style="color:#a9a4a0">まだ中身がありません</div>'}</div>
+    <div class="sheet-actions" style="margin-top:14px"><button class="btn" id="pv_copy">全文をコピー</button><span class="sp"></span><button class="btn" id="pv_close">閉じる</button></div>`);
+  d.querySelector('#pv_close').onclick=()=>d.remove();
+  d.querySelector('#pv_copy').onclick=()=>copyText(fullText(is));
+}
+/* 次号をつくる（定番ブロックを引き継ぐ） */
+async function createNextIssue({markSent=false}={}){
+  const is=issue();
+  if(markSent && is.status!=='sent') await updateIssue(is.id,{status:'sent'});
+  let nx=nextIssue();
+  if(!nx) nx=await insertIssue({issue_month:nextMonthOf(is.issue_month)});
+  let copied=0;
+  for(const b of S.items.filter(x=>x.issue_id===is.id && x.is_template)){
+    if(itemsOf(nx.id,b.slot).some(x=>x.title===b.title)) continue;
+    const {id,issue_id,captured_at,...rest}=b;
+    await insertItem({...rest, issue_id:nx.id, status:'writing'}); copied++;
+  }
+  setIssue(nx.id); view='issue'; render();
+  toast(monthLabel(nx.issue_month)+'号をつくりました'+(copied?'（定番 '+copied+' 本を引き継ぎ）':''));
 }
 
-function slotSheet(key){
-  const s=S.slots.find(x=>x.key===key)||{key:'',label:'',sort_order:S.slots.length+1};
-  const isNew=!key;
-  const d=sheet(`<h2>${isNew?'枠を追加':'枠を編集'}</h2>
-    <label class="f"><span>表示名</span><input type="text" id="s_label" value="${esc(s.label)}"></label>
-    ${isNew?`<label class="f"><span>キー（半角英字）</span><input type="text" id="s_key" placeholder="news"></label>`:''}
-    <label class="f"><span>並び順</span><input type="text" id="s_order" value="${s.sort_order}"></label>
-    <div class="sheet-actions">${isNew?'':'<button class="btn danger" id="s_del">削除</button>'}
-      <span class="sp"></span><button class="btn" id="s_cancel">やめる</button>
-      <button class="btn primary" id="s_save">保存</button></div>`);
-  d.querySelector('#s_cancel').onclick=()=>d.remove();
-  if(!isNew) d.querySelector('#s_del').onclick=async()=>{
-    if(!confirm('この枠を削除します。中の項目は自由枠に移ります。')) return;
-    await remove('ns_slots',key); S.slots=S.slots.filter(x=>x.key!==key);
-    S.items.forEach(i=>{ if(i.slot===key) i.slot=null; });
-    if(!LIVE) await localWrite();
-    d.remove(); render(); toast('削除しました');};
-  d.querySelector('#s_save').onclick=async()=>{
-    const label=d.querySelector('#s_label').value.trim();
-    const order=parseInt(d.querySelector('#s_order').value,10)||0;
-    if(!label){ toast('表示名を入れてください'); return; }
-    if(isNew){
-      const k=(d.querySelector('#s_key').value.trim()||'s'+Date.now().toString(36)).toLowerCase();
-      if(LIVE){ const r=await api('ns_slots',{method:'POST',body:JSON.stringify({key:k,label,sort_order:order})}); S.slots.push(r[0]); }
-      else { S.slots.push({key:k,label,sort_order:order}); await localWrite(); }
-    }else{
-      if(LIVE) await api(`ns_slots?key=eq.${key}`,{method:'PATCH',body:JSON.stringify({label,sort_order:order})});
-      const ix=S.slots.findIndex(x=>x.key===key); S.slots[ix]={...S.slots[ix],label,sort_order:order};
-      if(!LIVE) await localWrite();
-    }
-    S.slots.sort((a,b)=>a.sort_order-b.sort_order);
-    d.remove(); render(); toast('保存しました');};
-}
+/* ---------- イベント ---------- */
+document.querySelector('nav').addEventListener('click',e=>{ const b=e.target.closest('button[data-view]'); if(!b) return; view=b.dataset.view; render(); });
+document.getElementById('main').addEventListener('submit',async e=>{
+  if(e.target.id!=='capture') return; e.preventDefault();
+  const inp=e.target.querySelector('#capIn'); const t=inp.value.trim(); if(!t) return;
+  await insertItem({title:t, slot:null, issue_id:null, status:'idea', body:'', image_status:'none', image_note:'', cta_label:'', link_url:'',
+    event_date:null, event_time:'', event_place:'', event_fee:'', event_host:'', event_extra:'', sort_order:S.items.length, is_template:false});
+  render(); document.getElementById('capIn')?.focus(); toast('拾いました');
+});
+document.getElementById('main').addEventListener('change',e=>{ if(e.target.id==='issueSel'){ setIssue(e.target.value); render(); } });
+document.getElementById('main').addEventListener('click',async e=>{
+  const t=e.target; const is=issue();
+  const pull=t.closest('[data-pull]'); if(pull){ e.stopPropagation(); pullSheet(pull.dataset.pull||null); return; }
+  const nw=t.closest('[data-new]'); if(nw){ itemSheet(null,{issue_id:is.id, slot:nw.dataset.new||null}); return; }
+  const it=t.closest('[data-item]'); if(it){ const i=S.items.find(x=>x.id===it.dataset.item); if(!i) return; if(i.issue_id) itemSheet(i); else inboxMenu(i); return; }
+  const cp=t.closest('[data-copy]'); if(cp){ const b=S.items.find(x=>x.id===cp.dataset.copy); if(await copyText(b.slot==='lead'?(b.body||''):blockText(b))){ cp.textContent='コピー済'; cp.classList.add('did'); } return; }
+  const ck=t.closest('[data-check]'); if(ck && ck.dataset.check){ const a=ck.dataset.check;
+    if(a==='issue') issueSheet(is); else if(a.startsWith('item:')) itemSheet(S.items.find(x=>x.id===a.slice(5)));
+    else if(a.startsWith('new:')) itemSheet(null,{issue_id:is.id,slot:a.slice(4)}); else if(a==='view:issue'){ view='issue'; render(); } return; }
+  const act=t.closest('[data-act]'); if(!act) return;
+  switch(act.dataset.act){
+    case 'issue': issueSheet(is); break;
+    case 'preview': previewSheet(is); break;
+    case 'copyall': copyText(fullText(is)); break;
+    case 'newissue': createNextIssue(); break;
+    case 'sent': if(confirm(monthLabel(is.issue_month)+'号を配信済みにして、次の号をつくります。よろしいですか？')) createNextIssue({markSent:true}); break;
+    case 'retry': flush(); break;
+  }
+});
+window.addEventListener('online',()=>flush());
 
-/* ---------------- events ---------------- */
-function bind(){
-  document.getElementById('main').onclick=async e=>{
-    const t=e.target;
-    const more=t.closest('[data-more]');
-    if(more){
-      const n=+more.dataset.more;
-      if(!S.issues.length){
-        if(LIVE){ const base=new Date(); base.setDate(1);
-          for(let k=0;k<n;k++){ const d2=new Date(base.getFullYear(),base.getMonth()+k,1);
-            const r=await insert('ns_issues',{issue_month:ym(d2),status:'planning'}); S.issues.push(r); }
-          S.issues.sort((a,b)=>a.issue_month.localeCompare(b.issue_month)); render(); toast('号を作りました');
-        } else { seedMonths(n); await localWrite(); render(); toast('号を作りました'); }
-      } else await addMonths(n);
-      return;}
-    const open=t.closest('[data-open]');
-    if(open){ openIssue=open.dataset.open; view='issues'; render();
-      const node=document.querySelector(`[data-toggle="${openIssue}"]`);
-      if(node) node.scrollIntoView({block:'center',behavior:'smooth'}); return;}
-    const tog=t.closest('[data-toggle]');
-    if(tog){ openIssue = openIssue===tog.dataset.toggle?null:tog.dataset.toggle; render(); return;}
-    const ni=t.closest('[data-newitem]');
-    if(ni){ const [iid,slot]=ni.dataset.newitem.split('|'); itemSheet(null,{issue_id:iid||null,slot:slot||''}); return;}
-    const ei=t.closest('[data-edititem]');
-    if(ei){ itemSheet(S.items.find(x=>x.id===ei.dataset.edititem)); return;}
-    const eis=t.closest('[data-editissue]');
-    if(eis){ issueSheet(S.issues.find(x=>x.id===eis.dataset.editissue)); return;}
-    const pv=t.closest('[data-preview]');
-    if(pv){ previewSheet(S.issues.find(x=>x.id===pv.dataset.preview)); return;}
-    const pl=t.closest('[data-pull]');
-    if(pl){ pullSheet(pl.dataset.pull); return;}
-    const f=t.closest('[data-filter]');
-    if(f){ stockFilter=f.dataset.filter; render(); return;}
-    const es=t.closest('[data-editslot]');
-    if(es){ slotSheet(es.dataset.editslot); return;}
-    if(t.closest('[data-newslot]')){ slotSheet(null); return;}
-  };
-}
-document.querySelector('nav').addEventListener('click',e=>{
-  const b=e.target.closest('button[data-view]'); if(!b) return; view=b.dataset.view; render();});
-document.getElementById('fab').onclick=()=>itemSheet(null,{});
-
+/* ---------- 起動 ---------- */
 function loginGate(){
   document.querySelector('nav').style.display='none';
-  document.getElementById('fab').style.display='none';
-  document.getElementById('main').innerHTML=`
-    <div class="issue" style="margin-top:40px"><div class="issue-body" style="text-align:center;padding:34px 18px">
-      <p class="hint" style="margin-bottom:18px">編集台帳を開くにはログインしてください。</p>
-      <button class="btn primary" id="signin">Googleでログイン</button>
-    </div></div>`;
-  document.getElementById('signin').onclick=()=>sb.auth.signInWithOAuth({
-    provider:'google', options:{redirectTo:location.href.split('#')[0]}});
+  document.getElementById('main').innerHTML=`<div class="gate"><p class="hint" style="margin-bottom:18px">編集台帳を開くにはログインしてください。</p>
+    <button class="btn primary" id="signin">Google でログイン</button></div>`;
+  document.getElementById('signin').onclick=()=>sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
 }
-
 (async function init(){
   const badge=document.getElementById('modeBadge');
   if(LIVE){
-    const {data}=await sb.auth.getSession();
-    session=data.session;
-    sb.auth.onAuthStateChange((_e,s)=>{ if(!!s!==!!session) location.reload(); });
+    const {data}=await sb.auth.getSession(); session=data.session;
+    sb.auth.onAuthStateChange((_e,s)=>{ if(!!s!==!!session) location.reload(); else if(s) session=s; });
     if(!session){ badge.textContent='未ログイン'; loginGate(); return; }
-    badge.textContent=(session.user.email||'').split('@')[0];
-    badge.classList.add('live');
-    badge.style.cursor='pointer'; badge.title='ログアウト';
-    badge.onclick=async()=>{ if(confirm('ログアウトしますか？')){ await sb.auth.signOut(); location.reload(); } };
-  }else{
-    badge.textContent='お試し保存';
-  }
-  try{ await loadAll(); }
-  catch(err){ badge.textContent='接続エラー'; console.error(err); }
-  render();
+    badge.textContent=(session.user.email||'').split('@')[0]; badge.classList.add('live'); badge.title='ログアウト';
+    badge.onclick=async()=>{ if(pending.length && !confirm('未保存の変更があります。ログアウトしますか？')) return;
+      if(confirm('ログアウトしますか？')){ await sb.auth.signOut(); location.reload(); } };
+  }else{ badge.textContent='お試し（この端末だけ）'; }
+  await loadAll(); render();
 })();
 </script>
 </body>
