@@ -60,7 +60,9 @@ main{padding:16px 16px 110px;max-width:760px;margin:0 auto}
 .item-main{flex:1;min-width:0}
 .item-title{font-size:14px;font-weight:600;line-height:1.45;word-break:break-word}
 .item-meta{font-size:11px;color:var(--muted);margin-top:3px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.item-snippet{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-note{font-size:12.5px;color:var(--muted);margin-top:6px;padding:6px 9px;background:var(--accent-soft);border-radius:4px;
+  white-space:pre-wrap;line-height:1.55;border-left:2px solid var(--accent)}
+.item-note::before{content:'メモ ';font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--accent)}
 .tag{border:1px solid var(--hair);border-radius:3px;padding:0 5px;line-height:17px;white-space:nowrap}
 .tag.warn{border-color:var(--amber);color:var(--amber)}
 .tag.ok{border-color:#cfd8cf;color:var(--good)}
@@ -128,6 +130,7 @@ label.f span{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;c
 input[type=text],input[type=date],input[type=url],select,textarea{width:100%;padding:9px 10px;border:1px solid var(--hair);
   border-radius:5px;background:var(--ground)}
 textarea{min-height:110px;resize:vertical;line-height:1.7}
+textarea.note{min-height:64px;background:var(--accent-soft);border-color:transparent}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
 .row{display:flex;gap:10px}.row>*{flex:1}
 .sheet-actions{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
@@ -379,10 +382,10 @@ function itemRow(i,{showSlot=false}={}){
   if(i.cta_label && !i.link_url) tags.push('<span class="tag warn">リンク未</span>');
   if(i.is_template) tags.push('<span class="tag tpl">毎号</span>');
   const plain = i.slot==='lead';
-  const snippet = plain && i.body ? `<div class="item-snippet">${esc(i.body)}</div>` : '';
+  const note = i.note && i.note.trim() ? `<div class="item-note">${esc(i.note.trim())}</div>` : '';
   return `<div class="item ${i.status}" data-item="${i.id}"><span class="bar"></span>
-    <span class="item-main"><span class="item-title">${esc(plain ? (i.body ? i.body.split('\n')[0] : '（まだ書いていません）') : i.title)}</span>${''}
-    <span class="item-meta"><span>${ITEM_STATUS[i.status]||''}</span>${tags.join('')}</span></span></div>`;
+    <span class="item-main"><span class="item-title">${esc(plain ? (i.body ? i.body.split('\n')[0] : '（まだ書いていません）') : i.title)}</span>
+    <span class="item-meta"><span>${ITEM_STATUS[i.status]||''}</span>${tags.join('')}</span>${note}</span></div>`;
 }
 
 function vInbox(){
@@ -445,7 +448,7 @@ const segHTML = (id,map,cur) => `<div class="seg" id="${id}">${Object.entries(ma
 function itemSheet(item, preset={}){
   const isNew=!item;
   const i = item || {title:preset.title||'',slot:preset.slot??null,issue_id:preset.issue_id??null,status:'idea',
-    image_status:'none',image_note:'',cta_label:'',link_url:'',body:preset.body||'',
+    image_status:'none',image_note:'',cta_label:'',link_url:'',body:preset.body||'',note:'',
     event_date:'',event_time:'',event_place:'',event_fee:'',event_host:'',event_extra:'',is_template:false};
   const sd=slotOf(i.slot); const plain = !!(sd&&sd.plain);
   const inIssue = !!i.issue_id;
@@ -456,7 +459,8 @@ function itemSheet(item, preset={}){
     <p class="sh-sub">${esc(where)}</p>
     ${plain?'':`<label class="f"><span>見出し</span><input type="text" id="f_title" value="${esc(i.title)}" placeholder="例：創造プロセス倶楽部オンライン"></label>`}
     <label class="f"><span>進み具合</span>${segHTML('f_status',ITEM_STATUS,i.status)}</label>
-    <label class="f"><span>本文</span><textarea id="f_body" ${plain?'style="min-height:160px"':''} placeholder="${plain?'季節の導入から今号の趣旨へ':'ニュースレターにそのまま載る文章'}">${esc(i.body)}</textarea></label>
+    <label class="f"><span>メモ（自分用・ニュースレターには載らない）</span><textarea id="f_note" class="note" placeholder="入れたい画像、書きたいこと、確認すること">${esc(i.note||'')}</textarea></label>
+    <label class="f"><span>本文（そのまま載る文章）</span><textarea id="f_body" ${plain?'style="min-height:160px"':''} placeholder="${plain?'季節の導入から今号の趣旨へ':'ニュースレターにそのまま載る文章'}">${esc(i.body)}</textarea></label>
     ${plain?'':`
     <div class="row">
       <label class="f"><span>バナー画像</span><select id="f_img">${Object.entries(IMG_STATUS).map(([k,v])=>`<option value="${k}" ${i.image_status===k?'selected':''}>${v}</option>`).join('')}</select></label>
@@ -497,7 +501,7 @@ function itemSheet(item, preset={}){
     const body=d.querySelector('#f_body').value;
     let title = plain ? 'リード文' : v('#f_title');
     if(!plain && !title){ toast('見出しを入れてください'); return; }
-    const patch={title, body, status:getStatus()};
+    const patch={title, body, note:d.querySelector('#f_note').value, status:getStatus()};
     if(plain) patch.is_template=false;
     else{
       Object.assign(patch,{image_status:d.querySelector('#f_img').value, image_note:v('#f_imgnote'), cta_label:v('#f_cta'), link_url:v('#f_link'),
@@ -624,7 +628,7 @@ document.getElementById('main').addEventListener('submit',async e=>{
   if(e.target.id!=='capture') return; e.preventDefault();
   const inp=e.target.querySelector('#capIn'); const t=inp.value.trim(); if(!t) return;
   await insertItem({title:t, slot:null, issue_id:null, status:'idea', body:'', image_status:'none', image_note:'', cta_label:'', link_url:'',
-    event_date:null, event_time:'', event_place:'', event_fee:'', event_host:'', event_extra:'', sort_order:S.items.length, is_template:false});
+    event_date:null, event_time:'', event_place:'', event_fee:'', event_host:'', event_extra:'', note:'', sort_order:S.items.length, is_template:false});
   render(); document.getElementById('capIn')?.focus(); toast('拾いました');
 });
 document.getElementById('main').addEventListener('change',e=>{ if(e.target.id==='issueSel'){ setIssue(e.target.value); render(); } });
