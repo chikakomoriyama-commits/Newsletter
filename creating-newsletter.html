@@ -84,6 +84,11 @@ main{padding:16px 16px 110px;max-width:760px;margin:0 auto}
 .issuebar .sp{flex:1}
 .headline{font-size:13px;color:var(--muted);margin:-6px 0 14px;padding:0 2px}
 .headline.set{color:var(--ink);font-weight:600}
+.issuenote{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:10px 12px 8px;margin:0 0 20px}
+.issuenote .in-label{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--accent);margin-bottom:4px;display:flex;justify-content:space-between}
+.issuenote .in-label span{font-family:var(--mono);font-weight:400;letter-spacing:0;color:var(--muted)}
+.issuenote textarea{width:100%;border:0;background:transparent;padding:2px 0;min-height:56px;resize:vertical;line-height:1.7;font-size:14px}
+.issuenote textarea:focus{outline:none}
 .slot{margin-bottom:16px}
 .slot-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;
   color:var(--muted);margin-bottom:6px}
@@ -274,7 +279,7 @@ const cleanItem = i => { const {_local,...r}=i; return r; };
 async function insertItem(row){ const rec={id:uuid(),captured_at:new Date().toISOString(),...row}; S.items.push(rec); await commit({kind:'insert',table:'ns_items',row:cleanItem(rec)}); return rec; }
 async function updateItem(id,patch){ const i=S.items.find(x=>x.id===id); Object.assign(i,patch); await commit({kind:'update',table:'ns_items',id,patch}); return i; }
 async function deleteItem(id){ S.items=S.items.filter(x=>x.id!==id); await commit({kind:'delete',table:'ns_items',id}); }
-async function insertIssue(row){ const rec={id:uuid(),headline:'',send_date:null,lead_text:'',status:'planning',...row}; S.issues.push(rec); sortIssues(); await commit({kind:'insert',table:'ns_issues',row:rec}); return rec; }
+async function insertIssue(row){ const rec={id:uuid(),headline:'',send_date:null,lead_text:'',note:'',status:'planning',...row}; S.issues.push(rec); sortIssues(); await commit({kind:'insert',table:'ns_issues',row:rec}); return rec; }
 async function updateIssue(id,patch){ const i=S.issues.find(x=>x.id===id); Object.assign(i,patch); await commit({kind:'update',table:'ns_issues',id,patch}); return i; }
 const sortIssues = () => S.issues.sort((a,b)=>a.issue_month.localeCompare(b.issue_month));
 
@@ -415,6 +420,8 @@ function vIssue(){
       <button class="btn ghost" data-act="issue">号の設定</button>
     </div>
     <div class="headline ${is.headline?'set':''}">${esc(is.headline)||'ヘッドライン未定 — 「号の設定」から'}</div>
+    <div class="issuenote"><div class="in-label">この号のメモ <span id="noteStat"></span></div>
+      <textarea id="issueNote" placeholder="この号でやりたいこと。入れたい画像、書きたい話、確認すること。自分用で、ニュースレターには載りません。">${esc(is.note||'')}</textarea></div>
     ${slots}${freeBlock}
     <div class="actions"><button class="btn" data-act="preview">通しで見る</button><button class="btn ghost" data-act="newissue">次の号をつくる</button></div>`;
 }
@@ -632,6 +639,18 @@ document.getElementById('main').addEventListener('submit',async e=>{
   render(); document.getElementById('capIn')?.focus(); toast('拾いました');
 });
 document.getElementById('main').addEventListener('change',e=>{ if(e.target.id==='issueSel'){ setIssue(e.target.value); render(); } });
+/* 号のメモ：打ち終わって1秒後、または欄を離れたときに保存 */
+let noteTimer=null;
+async function saveIssueNote(){
+  const ta=document.getElementById('issueNote'); const is=issue(); if(!ta||!is) return;
+  const v=ta.value; if(v===(is.note||'')) return;
+  await updateIssue(is.id,{note:v});
+  const st=document.getElementById('noteStat'); if(st){ st.textContent='保存 '+nowHM(); }
+}
+document.getElementById('main').addEventListener('input',e=>{ if(e.target.id!=='issueNote') return;
+  const st=document.getElementById('noteStat'); if(st) st.textContent='…';
+  clearTimeout(noteTimer); noteTimer=setTimeout(saveIssueNote,1000); });
+document.getElementById('main').addEventListener('focusout',e=>{ if(e.target.id==='issueNote'){ clearTimeout(noteTimer); saveIssueNote(); } });
 document.getElementById('main').addEventListener('click',async e=>{
   const t=e.target; const is=issue();
   const pull=t.closest('[data-pull]'); if(pull){ e.stopPropagation(); pullSheet(pull.dataset.pull||null); return; }
