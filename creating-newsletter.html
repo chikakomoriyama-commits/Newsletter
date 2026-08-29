@@ -60,9 +60,11 @@ main{padding:16px 16px 110px;max-width:760px;margin:0 auto}
 .item-main{flex:1;min-width:0}
 .item-title{font-size:14px;font-weight:600;line-height:1.45;word-break:break-word}
 .item-meta{font-size:11px;color:var(--muted);margin-top:3px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.item-note{font-size:12.5px;color:var(--muted);margin-top:6px;padding:6px 9px;background:var(--accent-soft);border-radius:4px;
-  white-space:pre-wrap;line-height:1.55;border-left:2px solid var(--accent)}
-.item-note::before{content:'メモ ';font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--accent)}
+.blocknote{position:relative;margin-top:8px}
+.blocknote textarea{width:100%;display:block;min-height:0;padding:7px 9px;font-size:13px;line-height:1.6;resize:vertical;
+  background:var(--accent-soft);border:1px solid transparent;border-left:2px solid var(--accent);border-radius:0 4px 4px 0;cursor:text}
+.blocknote textarea:focus{outline:none;border-color:var(--accent);background:var(--ground)}
+.blocknote .bn-stat{position:absolute;right:8px;top:-15px;font-family:var(--mono);font-size:9px;color:var(--muted)}
 .tag{border:1px solid var(--hair);border-radius:3px;padding:0 5px;line-height:17px;white-space:nowrap}
 .tag.warn{border-color:var(--amber);color:var(--amber)}
 .tag.ok{border-color:#cfd8cf;color:var(--good)}
@@ -84,11 +86,6 @@ main{padding:16px 16px 110px;max-width:760px;margin:0 auto}
 .issuebar .sp{flex:1}
 .headline{font-size:13px;color:var(--muted);margin:-6px 0 14px;padding:0 2px}
 .headline.set{color:var(--ink);font-weight:600}
-.issuenote{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:10px 12px 8px;margin:0 0 20px}
-.issuenote .in-label{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--accent);margin-bottom:4px;display:flex;justify-content:space-between}
-.issuenote .in-label span{font-family:var(--mono);font-weight:400;letter-spacing:0;color:var(--muted)}
-.issuenote textarea{width:100%;border:0;background:transparent;padding:2px 0;min-height:56px;resize:vertical;line-height:1.7;font-size:14px}
-.issuenote textarea:focus{outline:none}
 .slot{margin-bottom:16px}
 .slot-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;
   color:var(--muted);margin-bottom:6px}
@@ -135,7 +132,6 @@ label.f span{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;c
 input[type=text],input[type=date],input[type=url],select,textarea{width:100%;padding:9px 10px;border:1px solid var(--hair);
   border-radius:5px;background:var(--ground)}
 textarea{min-height:110px;resize:vertical;line-height:1.7}
-textarea.note{min-height:64px;background:var(--accent-soft);border-color:transparent}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
 .row{display:flex;gap:10px}.row>*{flex:1}
 .sheet-actions{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
@@ -279,7 +275,7 @@ const cleanItem = i => { const {_local,...r}=i; return r; };
 async function insertItem(row){ const rec={id:uuid(),captured_at:new Date().toISOString(),...row}; S.items.push(rec); await commit({kind:'insert',table:'ns_items',row:cleanItem(rec)}); return rec; }
 async function updateItem(id,patch){ const i=S.items.find(x=>x.id===id); Object.assign(i,patch); await commit({kind:'update',table:'ns_items',id,patch}); return i; }
 async function deleteItem(id){ S.items=S.items.filter(x=>x.id!==id); await commit({kind:'delete',table:'ns_items',id}); }
-async function insertIssue(row){ const rec={id:uuid(),headline:'',send_date:null,lead_text:'',note:'',status:'planning',...row}; S.issues.push(rec); sortIssues(); await commit({kind:'insert',table:'ns_issues',row:rec}); return rec; }
+async function insertIssue(row){ const rec={id:uuid(),headline:'',send_date:null,lead_text:'',status:'planning',...row}; S.issues.push(rec); sortIssues(); await commit({kind:'insert',table:'ns_issues',row:rec}); return rec; }
 async function updateIssue(id,patch){ const i=S.issues.find(x=>x.id===id); Object.assign(i,patch); await commit({kind:'update',table:'ns_issues',id,patch}); return i; }
 const sortIssues = () => S.issues.sort((a,b)=>a.issue_month.localeCompare(b.issue_month));
 
@@ -378,7 +374,7 @@ function renderBanner(){ const b=document.getElementById('banner'); const h=rend
   if(b && !h) b.remove(); else if(!b && h) document.getElementById('main').insertAdjacentHTML('afterbegin',h);
   else if(b) b.outerHTML=h; }
 
-function itemRow(i,{showSlot=false}={}){
+function itemRow(i,{showSlot=false,withNote=false}={}){
   const tags=[];
   if(showSlot && i.slot) tags.push(`<span class="tag">${esc(slotOf(i.slot)?.label||i.slot)}</span>`);
   if(i.event_date) tags.push(`<span class="tag">${md(i.event_date)} 開催</span>`);
@@ -387,7 +383,7 @@ function itemRow(i,{showSlot=false}={}){
   if(i.cta_label && !i.link_url) tags.push('<span class="tag warn">リンク未</span>');
   if(i.is_template) tags.push('<span class="tag tpl">毎号</span>');
   const plain = i.slot==='lead';
-  const note = i.note && i.note.trim() ? `<div class="item-note">${esc(i.note.trim())}</div>` : '';
+  const note = withNote ? `<div class="blocknote"><textarea data-note="${i.id}" rows="2" placeholder="ここで何を言いたいか、入れたい画像、書きたいこと">${esc(i.note||'')}</textarea><span class="bn-stat"></span></div>` : '';
   return `<div class="item ${i.status}" data-item="${i.id}"><span class="bar"></span>
     <span class="item-main"><span class="item-title">${esc(plain ? (i.body ? i.body.split('\n')[0] : '（まだ書いていません）') : i.title)}</span>
     <span class="item-meta"><span>${ITEM_STATUS[i.status]||''}</span>${tags.join('')}</span>${note}</span></div>`;
@@ -409,19 +405,18 @@ function vIssue(){
     const empty = its.length ? '' : `<div class="empty" data-new="${s.key}"><span>＋ 書く</span>${s.plain?'':`<span data-pull="${s.key}">ネタから入れる</span>`}</div>`;
     const more = its.length && s.multi ? `<div class="empty" data-new="${s.key}"><span>＋ もう一本</span><span data-pull="${s.key}">ネタから入れる</span></div>` : '';
     return `<div class="slot"><div class="slot-label"><span>${esc(s.label)}</span><span class="rule"></span>${canAdd?`<button class="add" data-new="${s.key}">＋</button>`:''}</div>
-      ${its.map(i=>itemRow(i)).join('')}${empty}${more}</div>`;
+      ${its.map(i=>itemRow(i,{withNote:true})).join('')}${empty}${more}</div>`;
   }).join('');
   const free=itemsOf(is.id,null);
   const freeBlock = `<div class="slot"><div class="slot-label"><span>この号だけの項目</span><span class="rule"></span><button class="add" data-new="">＋</button></div>
-    ${free.map(i=>itemRow(i)).join('')}${free.length?'':`<div class="empty" data-new=""><span>＋ 足す</span><span data-pull="">ネタから入れる</span></div>`}</div>`;
+    ${free.map(i=>itemRow(i,{withNote:true})).join('')}${free.length?'':`<div class="empty" data-new=""><span>＋ 足す</span><span data-pull="">ネタから入れる</span></div>`}</div>`;
   return `<div class="issuebar">
       <span class="issuepick"><select id="issueSel">${opts}</select></span>
       <span class="pill ${is.status}">${ISSUE_STATUS[is.status]}</span><span class="sp"></span>
       <button class="btn ghost" data-act="issue">号の設定</button>
     </div>
     <div class="headline ${is.headline?'set':''}">${esc(is.headline)||'ヘッドライン未定 — 「号の設定」から'}</div>
-    <div class="issuenote"><div class="in-label">この号のメモ <span id="noteStat"></span></div>
-      <textarea id="issueNote" placeholder="この号でやりたいこと。入れたい画像、書きたい話、確認すること。自分用で、ニュースレターには載りません。">${esc(is.note||'')}</textarea></div>
+    <p class="hint">各ブロックの下のメモは自分用です。ニュースレターには載りません。</p>
     ${slots}${freeBlock}
     <div class="actions"><button class="btn" data-act="preview">通しで見る</button><button class="btn ghost" data-act="newissue">次の号をつくる</button></div>`;
 }
@@ -466,7 +461,6 @@ function itemSheet(item, preset={}){
     <p class="sh-sub">${esc(where)}</p>
     ${plain?'':`<label class="f"><span>見出し</span><input type="text" id="f_title" value="${esc(i.title)}" placeholder="例：創造プロセス倶楽部オンライン"></label>`}
     <label class="f"><span>進み具合</span>${segHTML('f_status',ITEM_STATUS,i.status)}</label>
-    <label class="f"><span>メモ（自分用・ニュースレターには載らない）</span><textarea id="f_note" class="note" placeholder="入れたい画像、書きたいこと、確認すること">${esc(i.note||'')}</textarea></label>
     <label class="f"><span>本文（そのまま載る文章）</span><textarea id="f_body" ${plain?'style="min-height:160px"':''} placeholder="${plain?'季節の導入から今号の趣旨へ':'ニュースレターにそのまま載る文章'}">${esc(i.body)}</textarea></label>
     ${plain?'':`
     <div class="row">
@@ -508,7 +502,7 @@ function itemSheet(item, preset={}){
     const body=d.querySelector('#f_body').value;
     let title = plain ? 'リード文' : v('#f_title');
     if(!plain && !title){ toast('見出しを入れてください'); return; }
-    const patch={title, body, note:d.querySelector('#f_note').value, status:getStatus()};
+    const patch={title, body, status:getStatus()};
     if(plain) patch.is_template=false;
     else{
       Object.assign(patch,{image_status:d.querySelector('#f_img').value, image_note:v('#f_imgnote'), cta_label:v('#f_cta'), link_url:v('#f_link'),
@@ -639,22 +633,23 @@ document.getElementById('main').addEventListener('submit',async e=>{
   render(); document.getElementById('capIn')?.focus(); toast('拾いました');
 });
 document.getElementById('main').addEventListener('change',e=>{ if(e.target.id==='issueSel'){ setIssue(e.target.value); render(); } });
-/* 号のメモ：打ち終わって1秒後、または欄を離れたときに保存 */
-let noteTimer=null;
-async function saveIssueNote(){
-  const ta=document.getElementById('issueNote'); const is=issue(); if(!ta||!is) return;
-  const v=ta.value; if(v===(is.note||'')) return;
-  await updateIssue(is.id,{note:v});
-  const st=document.getElementById('noteStat'); if(st){ st.textContent='保存 '+nowHM(); }
+/* ブロックのメモ：打ち終わって1秒後、または欄を離れたときに保存 */
+const noteTimers={};
+async function saveBlockNote(ta){
+  const id=ta.dataset.note; const i=S.items.find(x=>x.id===id); if(!i) return;
+  const v=ta.value; if(v===(i.note||'')) return;
+  await updateItem(id,{note:v});
+  const st=ta.parentElement.querySelector('.bn-stat'); if(st) st.textContent='保存 '+nowHM();
 }
-document.getElementById('main').addEventListener('input',e=>{ if(e.target.id!=='issueNote') return;
-  const st=document.getElementById('noteStat'); if(st) st.textContent='…';
-  clearTimeout(noteTimer); noteTimer=setTimeout(saveIssueNote,1000); });
-document.getElementById('main').addEventListener('focusout',e=>{ if(e.target.id==='issueNote'){ clearTimeout(noteTimer); saveIssueNote(); } });
+document.getElementById('main').addEventListener('input',e=>{ const ta=e.target.closest('textarea[data-note]'); if(!ta) return;
+  const st=ta.parentElement.querySelector('.bn-stat'); if(st) st.textContent='…';
+  clearTimeout(noteTimers[ta.dataset.note]); noteTimers[ta.dataset.note]=setTimeout(()=>saveBlockNote(ta),1000); });
+document.getElementById('main').addEventListener('focusout',e=>{ const ta=e.target.closest?.('textarea[data-note]'); if(ta){ clearTimeout(noteTimers[ta.dataset.note]); saveBlockNote(ta); } });
 document.getElementById('main').addEventListener('click',async e=>{
   const t=e.target; const is=issue();
   const pull=t.closest('[data-pull]'); if(pull){ e.stopPropagation(); pullSheet(pull.dataset.pull||null); return; }
   const nw=t.closest('[data-new]'); if(nw){ itemSheet(null,{issue_id:is.id, slot:nw.dataset.new||null}); return; }
+  if(t.closest('.blocknote')) return;   /* メモ欄のクリックでは編集画面を開かない */
   const it=t.closest('[data-item]'); if(it){ const i=S.items.find(x=>x.id===it.dataset.item); if(!i) return; if(i.issue_id) itemSheet(i); else inboxMenu(i); return; }
   const cp=t.closest('[data-copy]'); if(cp){ const b=S.items.find(x=>x.id===cp.dataset.copy); if(await copyText(b.slot==='lead'?(b.body||''):blockText(b))){ cp.textContent='コピー済'; cp.classList.add('did'); } return; }
   const ck=t.closest('[data-check]'); if(ck && ck.dataset.check){ const a=ck.dataset.check;
